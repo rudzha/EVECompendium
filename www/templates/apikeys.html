@@ -1,0 +1,11 @@
+<ion-view view-title="API Keys">
+    <ion-content>
+        <button ng-click="addNewAPIKey()" class="button button-block">Add new API key</button>
+        <ion-list>
+            <ion-item ng-repeat="key in apikeys" href="#/app/apikeys/{{key.id}}">
+                {{key.name}}
+                {{key.id}}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>
