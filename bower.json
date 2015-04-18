@@ -4,6 +4,7 @@
   "devDependencies": {
     "ionic": "driftyco/ionic-bower#1.0.0-rc.2",
     "pouchdb": "~3.4.0",
-    "angular-x2js": "~0.2.0"
+    "angular-x2js": "~0.2.0",
+    "angular-pouchdb": "~2.0.1"
   }
 }

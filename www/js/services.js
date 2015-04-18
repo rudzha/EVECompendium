@@ -1,7 +1,25 @@
+'use strict';
 angular.module('starter.services', [])
-.service('APIKeyService', function(EVEAPI, $q){
-    var apiKeyService = {};
-    apiKeyService.listKeys = function (){
+.service('APIKeyService', function(EVEAPIHolder, pouchDB, $q){
+    var localDB = pouchDB('compendium');
+    this.init = function () {
+        var dfd = $q.defer();
+        localDB.get('APIKeys').then(function(resp){
+            dfd.resolve(resp);
+            console.log(resp);
+        }).catch(function(err){
+            console.log(err);
+            if(err.status === 404) {
+                var keys = {
+                    _id: 'APIKeys',
+                    keys: []
+                };
+                localDB.put(keys);
+            }
+        });
+        return dfd.promise;
+    };
+    this.listKeys = function (){
         var dfd = $q.defer();
         localDB.get('APIKeys')
         .then(function(response){
@@ -9,34 +27,26 @@ angular.module('starter.services', [])
         })
         .catch(function(err){
             console.log('APIKeyService', err);
+            dfd.resolve([]);
         });
         return dfd.promise;
     };
-    apiKeyService.createKey = function(key){
-        var eveAPI = new EVEAPI(key.id, key.code);
-        eveAPI.Account.refreshKey().then(function(response){
-            if(typeof(eveAPI.Account.keyInfo) !== 'undefined') {
-                key.expires = eveAPI.Account.keyInfo._expires;
-                localDB.get('APIKeys')
-                .then(function(response){
-                    var apikeys = response;
-                    apikeys.keys.push(key);
-                    localDB.put(apikeys).then(function(response){
-                        console.log('APIKeyService', response);
-                    }).catch(function(err){
-                        console.log('APIKeyService', err);
-                    });
-                })
-                .catch(function(err){
-                    console.log('APIKeyService', err);
-                });
+    this.createKey = function(key) {
+        var dfd = $q.defer();
+        localDB.get('APIKeys')
+        .then(
+            function(apikeys){
+                apikeys.keys.push(key);
+                localDB.put(apikeys);
+                return apikeys;
             }
-        }).catch(function(err){
-            console.log('APIKeyService', err);
+        ).then(function(apikeys){
+            dfd.resolve(apikeys.keys);
         });
-
+        EVEAPIHolder.add(key);
+        return dfd.promise;
     };
-    apiKeyService.readKey = function (keyid) {
+    this.readKey = function (keyid) {
         var dfd = $q.defer();
         localDB.get('APIKeys').then(function(response){
             console.log(response);
@@ -50,7 +60,7 @@ angular.module('starter.services', [])
         });
         return dfd.promise;
     };
-    apiKeyService.deleteKey = function (keyid) {
+    this.deleteKey = function (keyid) {
         var dfd = $q.defer();
         localDB.get('APIKeys')
         .then(function(response){
@@ -69,7 +79,7 @@ angular.module('starter.services', [])
         }).catch(function(err){
             console.log(err);
         });
+        EVEAPIHolder.delete(keyid);
         return dfd.promise;
     };
-    return apiKeyService;
 });

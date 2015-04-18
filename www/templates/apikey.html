@@ -1,10 +1,19 @@
 <ion-view view-title="API Key">
     <ion-content>
-        <div class="card">
-            <h1>{{apikey.name}}</h1>
-            <p>{{apikey.id}}</p>
-            <p>{{apikey.code}}</p>
+        <div class="list card">
+            <div class="item">
+                <h1>{{apikey.name}}</h1>
+                <p>Key ID: {{apikey.keyID}}</p>
+                <p>Verification Code: {{apikey.keyCode}}</p>
+                <p>Key Expires: {{apikey.Account.keyInfo.expires}}</p>
+            </div>
+            <div class="item">
+                <h1>Characters</h1>
+                <p ng-repeat="char in apikey.Account.characters">{{char._name}}</p>
+            </div>
+            <div class="item">
+                <button ng-click="delete()" class="button button-block">Delete key</button>
+            </div>
         </div>
-        <button ng-click="delete()" class="button button-block">Delete key</button>
     </ion-content>
 </ion-view>

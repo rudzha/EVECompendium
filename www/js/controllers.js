@@ -1,19 +1,14 @@
+'use strict';
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, EVEAPIHolder) {
+    $scope.selectedCharacter = 'toast';
+    $scope.instances = EVEAPIHolder.instances;
 })
 .controller('CharactersCtrl', function($scope) {
-  $scope.characters = [
-    { name: 'Reggae', id: 1 },
-    { name: 'Chill', id: 2 },
-    { name: 'Dubstep', id: 3 },
-    { name: 'Indie', id: 4 },
-    { name: 'Rap', id: 5 },
-    { name: 'Cowbell', id: 6 }
-  ];
-})
-.controller('APIKeysCtrl', function($scope, $ionicModal, APIKeyService, keys) {
 
+})
+.controller('APIKeysCtrl', function($scope, $ionicModal, EVEAPIHolder, APIKeyService, keys) {
     $scope.newkey = {};
     $ionicModal.fromTemplateUrl('templates/addapikey.html', {
       scope: $scope
@@ -30,18 +25,18 @@ angular.module('starter.controllers', [])
     };
 
     $scope.addNewKey = function() {
-        console.log('Adding New Key: ', $scope.newkey);
-        APIKeyService.createKey($scope.newkey);
+        APIKeyService.createKey($scope.newkey).then(function(apikeys) {
+            $scope.apikeys = apikeys;
+        });
         $scope.closeAddNewAPIKey();
     };
-
     $scope.apikeys = keys;
-    console.log(keys);
 })
-.controller('APIKeyCtrl', function($scope, APIKeyService, EVEAPI, key) {
-    var apiKey = new EVEAPI(key.id, key.code);
-    $scope.apikey = key;
+.controller('APIKeyCtrl', function($scope, $state, APIKeyService, EVEAPIHolder, key) {
+    $scope.apikey = EVEAPIHolder.get(key.id);
+    $scope.apikey.Account.refresh();
     $scope.delete = function(){
-        APIKeyService.deleteKey($scope.apikey.id);
+        APIKeyService.deleteKey($scope.apikey.keyID);
+        $state.go('app.apikeys');
     };
 });

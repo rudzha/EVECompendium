@@ -1,11 +1,15 @@
 <ion-modal-view>
-    <ion-header-bar>
+    <ion-header-bar class="bar-stable">
         <h1 class="title">Add new API Key</h1>
         <div class="buttons">
-            <button class="button button-clear" ng-click="closeAddNewAPIKey()">Close</button>
+            <button class="button button-stable button-clear" ng-click="closeAddNewAPIKey()">Close</button>
         </div>
     </ion-header-bar>
-    <ion-content>
+    <ion-content padding="true" scroll="false" class="has-header">
+        <div>
+            <h2>Where to get the API key?</h2>
+            <p>Create EVE API key at the link below, for testing purposes I prefer the full key. App supports multiple characters</p>
+        </div>
         <form ng-submit="addNewKey()">
             <div class="list">
                 <label class="item item-input item-floating-label">
@@ -20,10 +24,8 @@
                     <span class="input-label">Verification Code</span>
                     <input type="text" placeholder="Verification Code" ng-model="newkey.code">
                 </label>
-                <label class="item">
-                    <button class="button button-block button-positive" type="submit">Add key</button>
-                </label>
             </div>
+            <button class="button button-block button-positive" type="submit">Add key</button>
         </form>
     </ion-content>
 </ion-modal-view>

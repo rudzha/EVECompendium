@@ -1,40 +1,83 @@
+'use strict';
 angular.module('starter.eveapi', [])
-.service('EveAPIXMLExtractor', function(x2js){
-    var eveAPIXMLExtractor = {
-        getData: function(xml) {
-            var temp = x2js.xml_str2json(xml.data);
-            var json = temp.eveapi.result;
-            return json;
+.service('EVEAPIHolder', function($q, EVEAPI){
+    this.instances = {};
+    this.add = function(key) {
+        this.instances[key.id] = new EVEAPI(key.name, key.id, key.code);
+    };
+    this.get = function(keyID) {
+        return this.instances[keyID];
+    };
+    this.delete = function(keyID) {
+        delete this.instances[keyID];
+    };
+    this.list = function(){
+        var dfd = $q.defer();
+        var list = [];
+        this.refresh();
+        for(var key in this.instances) {
+            list.push(key);
+            console.log(key);
+        }
+        dfd.resolve(list);
+        return dfd.promise;
+    };
+    this.refresh = function() {
+        for(var key in this.instances) {
+            console.log('refresh', key);
+            this.instances[key].Account.refresh();
         }
     };
-    return eveAPIXMLExtractor;
 })
-.factory('EVEAPI', function(CONFIG, $http, $q, EveAPIXMLExtractor){
-    var EVEAPI = function (keyID, keyCode) {
+.factory('EVEAPI', function(CONFIG, $http, $q, x2js){
+    var extractXML = function(xml){
+        var json = x2js.xml_str2json(xml.data);
+        return json.eveapi.result;
+    };
+    var EVEAPI = function (name, keyID, keyCode) {
         var self = this;
+        this.name = name;
         this.keyID = keyID;
         this.keyCode = keyCode;
+        this.keyStatus = 'NONE';
         this.Account = {
             keyInfo: null,
             characters: null,
-            refreshKey: function() {
-                var dfd = $q.defer();
+            refresh: function() {
                 $http.get(CONFIG.APIPath + 'account/apikeyinfo.xml.aspx', {
+                    params: {
+                        keyID: self.keyID,
+                        vCode: self.keyCode
+                    }
+                }).then(function(resp) {
+                    var data = extractXML(resp);
+                    self.Account.keyInfo = {
+                        expires: data.key._expires
+                    };
+                }).catch(function(err) {
+                    console.log('EVEAPI', err);
+                    self.keyStatus = 'FAILED';
+                });
+                $http.get(CONFIG.APIPath + 'account/characters.xml.aspx', {
                         params: {
                             keyID: self.keyID,
                             vCode: self.keyCode
                         }
-                    }).then(function(resp){
-                        console.log('EVEAPI', resp);
-                        temp = EveAPIXMLExtractor.getData(resp).key;
-                        self.Account.keyInfo = temp;
-                        dfd.resolve(temp);
-                    }).catch(function(err){
+                }).then(function(resp){
+                    var data = extractXML(resp);
+                    if(Array.isArray(data.rowset.row)){
+                        self.Account.characters = data.rowset.row;
+                    } else {
+                        self.Account.characters = [];
+                        self.Account.characters.push(data.rowset.row);
+                    }
+                }).catch(function(err){
                         console.log('EVEAPI', err);
-                        dfd.reject(err);
-                    });
-                return dfd.promise;
+                });
             }
+        };
+        this.Characters = {
+            characters: [],
         };
     };
     return EVEAPI;
