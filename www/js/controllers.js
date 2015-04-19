@@ -1,11 +1,27 @@
 'use strict';
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, EVEAPIHolder) {
-    $scope.selectedCharacter = 'toast';
+.controller('AppCtrl', function($scope, $state, EVEAPIHolder, UserService) {
+    $scope.user = UserService;
     $scope.instances = EVEAPIHolder.instances;
+    $scope.$watch('selectedCharacter', function(){
+        console.log($scope.selectedCharacter);
+    });
+    $scope.gotoApiKeys = function(){
+        $state.go('app.apikeys');
+    };
+    $scope.refresh = function (){
+        EVEAPIHolder.refresh();
+    };
 })
-.controller('CharactersCtrl', function($scope) {
+.controller('menuCtrl', function($scope, $state) {
+
+})
+.controller('CharactersCtrl', function($scope, $state) {
+
+})
+.controller('CharacterSheetCtrl', function($scope, $state, keyID, characterID) {
+    $scope.character = $scope.instances[keyID].Characters.characters[characterID];
 
 })
 .controller('APIKeysCtrl', function($scope, $ionicModal, EVEAPIHolder, APIKeyService, keys) {

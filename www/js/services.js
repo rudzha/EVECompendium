@@ -1,5 +1,9 @@
 'use strict';
 angular.module('starter.services', [])
+.service('UserService', function(){
+    this.selectedAPIKey = '';
+    this.selectedCharacter = '';
+})
 .service('APIKeyService', function(EVEAPIHolder, pouchDB, $q){
     var localDB = pouchDB('compendium');
     this.init = function () {

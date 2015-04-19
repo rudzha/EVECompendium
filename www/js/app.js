@@ -42,7 +42,6 @@ angular.module('starter', [
 
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
-
     .state('app', {
         url: '/app',
         abstract: true,
@@ -65,7 +64,7 @@ angular.module('starter', [
         }
     })
     .state('app.apikey', {
-        url: '/apikeys/:keyId',
+        url: '/apikeys/:keyID',
         views: {
             'menuContent': {
                 templateUrl: 'templates/apikey.html',
@@ -74,17 +73,34 @@ angular.module('starter', [
         },
         resolve: {
             key: function(APIKeyService, $stateParams) {
-                return APIKeyService.readKey($stateParams.keyId);
+                return APIKeyService.readKey($stateParams.keyID);
             }
         }
     })
-
     .state('app.characters', {
         url: '/characters',
         views: {
             'menuContent': {
                 templateUrl: 'templates/characters.html',
                 controller: 'CharactersCtrl'
+            }
+        }
+    })
+
+    .state('app.character', {
+        url: '/apikeys/:keyID/characters/:characterID',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/charactersheet.html',
+                controller: 'CharacterSheetCtrl'
+            }
+        },
+        resolve: {
+            keyID: function($stateParams) {
+                return $stateParams.keyID;
+            },
+            characterID: function($stateParams) {
+                return $stateParams.characterID;
             }
         }
     });

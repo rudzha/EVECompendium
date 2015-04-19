@@ -1,12 +1,7 @@
 <ion-view view-title="Characters">
     <ion-content padding="true" class="has-header">
-        <div class="">
-            <a href="#/app/apikeys" ng-click="state.go('search')" class="button button-block">
-                Manage API keys
-            </a>
-        </div>
         <ion-list ng-repeat="instance in instances">
-            <ion-radio ng-repeat="character in instance.Account.characters" ng-model="$parent.$parent.selectedCharacter" ng-value="character._characterID" class="item item-thumbnail-left">
+            <ion-radio ng-repeat="character in instance.Account.characters" ng-model="user.selectedCharacter" ng-value="character._characterID" ng-change="user.selectedAPIKey=instance.keyID" class="item item-thumbnail-left">
                 <img ng-src="http://image.eveonline.com/character/{{character._characterID}}_512.jpg">
                 <h2>{{character._name}}</h2>
                 <p>{{character._corporationName}}</p>

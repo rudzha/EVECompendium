@@ -26,6 +26,7 @@ angular.module('starter.eveapi', [])
         for(var key in this.instances) {
             console.log('refresh', key);
             this.instances[key].Account.refresh();
+            this.instances[key].Characters.refresh();
         }
     };
 })
@@ -41,8 +42,8 @@ angular.module('starter.eveapi', [])
         this.keyCode = keyCode;
         this.keyStatus = 'NONE';
         this.Account = {
-            keyInfo: null,
-            characters: null,
+            keyInfo: {},
+            characters: [],
             refresh: function() {
                 $http.get(CONFIG.APIPath + 'account/apikeyinfo.xml.aspx', {
                     params: {
@@ -77,7 +78,31 @@ angular.module('starter.eveapi', [])
             }
         };
         this.Characters = {
-            characters: [],
+            characters: {},
+            refresh: function() {
+                for(var char in self.Account.characters){
+                    $http.get(CONFIG.APIPath + 'char/CharacterSheet.xml.aspx', {
+                        params: {
+                            keyID: self.keyID,
+                            characterID: self.Account.characters[char]._characterID,
+                            vCode: self.keyCode
+                        }
+                    }).then(function(resp){
+                        console.log(resp);
+                        var data = extractXML(resp);
+                        var character = {
+                            name: data.name,
+                            corporationName: data.corporationName,
+                            allianceName: data.allianceName,
+                            balance: data.balance,
+                            skills: data.rowset[3]
+                        };
+                        self.Characters.characters[data.characterID] = character;
+                    }).catch(function(err) {
+                        console.log('EVEAPI', err);
+                    });
+                }
+            }
         };
     };
     return EVEAPI;
