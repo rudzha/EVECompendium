@@ -10,9 +10,9 @@ angular.module('starter.services', [])
         var dfd = $q.defer();
         localDB.get('APIKeys').then(function(resp){
             dfd.resolve(resp);
-            console.log(resp);
+            //console.log(resp);
         }).catch(function(err){
-            console.log(err);
+            //console.log(err);
             if(err.status === 404) {
                 var keys = {
                     _id: 'APIKeys',
@@ -53,7 +53,7 @@ angular.module('starter.services', [])
     this.readKey = function (keyid) {
         var dfd = $q.defer();
         localDB.get('APIKeys').then(function(response){
-            console.log(response);
+            //console.log(response);
             response.keys.forEach(function(key){
                 if(key.id === keyid) {
                     dfd.resolve(key);

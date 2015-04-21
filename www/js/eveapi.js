@@ -17,16 +17,17 @@ angular.module('starter.eveapi', [])
         this.refresh();
         for(var key in this.instances) {
             list.push(key);
-            console.log(key);
+            //console.log(key);
         }
         dfd.resolve(list);
         return dfd.promise;
     };
     this.refresh = function() {
         for(var key in this.instances) {
-            console.log('refresh', key);
+            //console.log('refresh', key);
             this.instances[key].Account.refresh();
             this.instances[key].Characters.refresh();
+            //console.log('EVEAPI Object', JSON.parse(JSON.stringify(this.instances[key])));
         }
     };
 })
@@ -56,7 +57,7 @@ angular.module('starter.eveapi', [])
                         expires: data.key._expires
                     };
                 }).catch(function(err) {
-                    console.log('EVEAPI', err);
+                    //console.log('EVEAPI', err);
                     self.keyStatus = 'FAILED';
                 });
                 $http.get(CONFIG.APIPath + 'account/characters.xml.aspx', {
@@ -73,7 +74,7 @@ angular.module('starter.eveapi', [])
                         self.Account.characters.push(data.rowset.row);
                     }
                 }).catch(function(err){
-                        console.log('EVEAPI', err);
+                        //console.log('EVEAPI', err);
                 });
             }
         };
@@ -88,7 +89,7 @@ angular.module('starter.eveapi', [])
                             vCode: self.keyCode
                         }
                     }).then(function(resp){
-                        console.log(resp);
+                        //console.log(resp);
                         var data = extractXML(resp);
                         var character = {
                             name: data.name,
@@ -99,7 +100,7 @@ angular.module('starter.eveapi', [])
                         };
                         self.Characters.characters[data.characterID] = character;
                     }).catch(function(err) {
-                        console.log('EVEAPI', err);
+                        //console.log('EVEAPI', err);
                     });
                 }
             }

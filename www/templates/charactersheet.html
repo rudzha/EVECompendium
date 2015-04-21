@@ -1,9 +1,18 @@
 <ion-view view-title="Character Sheet">
     <ion-content padded="true">
-        <h2>{{character.name}}</h2>
-        <p>{{character.corporationName}}</p>
-        <p>{{character.allianceName}}</p>
-        <p>{{character.balance}} isk</p>
-        <p>{{character.skills}} sp</p>
+        <div class="list card">
+            <div class="item">
+                <h2>{{character.name}}</h2>
+                <p>{{character.corporationName}}</p>
+                <p>{{character.allianceName}}</p>
+                <p>{{character.balance}} isk</p>
+            </div>
+            <div class="item">
+                <div ng-repeat="(group, skills) in groupedSkills">
+                    <h2>{{group}}</h2>
+                    <p ng-repeat="skill in skills">{{skill.skill}}: {{skill.level}}</p>
+                </div>
+            </div>
+        </div>
     </ion-content>
 </ion-view>

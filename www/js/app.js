@@ -10,16 +10,28 @@ angular.module('starter', [
     'starter.controllers',
     'starter.services',
     'starter.eveapi',
+    'starter.skilltree',
+    'ngLodash',
     'cb.x2js',
     'pouchdb'
     ])
 .constant('CONFIG', {
     APIPath: 'https://api.eveonline.com/'
 })
-.run(function($ionicPlatform, EVEAPIHolder, APIKeyService) {
+.run(function($ionicPlatform, EVEAPIHolder, APIKeyService, SkillTreeService) {
     $ionicPlatform.ready(function() {
-        APIKeyService.init().then(function(resp){
-            console.log(resp);
+        SkillTreeService.init().then(function() {
+            if(SkillTreeService.isOutOfDate()){
+                console.log('INIT', 'SkillTree out of date');
+                SkillTreeService.refresh().then(function(){
+                    console.log('INIT', 'SkillTree refreshed');
+                    SkillTreeService.save();
+                });
+            } else {
+                console.log('INIT', 'SkillTree up to date');
+            }
+        });
+        APIKeyService.init().then(function(resp) {
             return APIKeyService.listKeys();
         }).then(function(keys){
             for(var key in keys){

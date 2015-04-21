@@ -4,8 +4,9 @@ angular.module('starter.controllers', [])
 .controller('AppCtrl', function($scope, $state, EVEAPIHolder, UserService) {
     $scope.user = UserService;
     $scope.instances = EVEAPIHolder.instances;
+    $scope.syncRate = 86400;
     $scope.$watch('selectedCharacter', function(){
-        console.log($scope.selectedCharacter);
+        //console.log($scope.selectedCharacter);
     });
     $scope.gotoApiKeys = function(){
         $state.go('app.apikeys');
@@ -20,9 +21,19 @@ angular.module('starter.controllers', [])
 .controller('CharactersCtrl', function($scope, $state) {
 
 })
-.controller('CharacterSheetCtrl', function($scope, $state, keyID, characterID) {
+.controller('CharacterSheetCtrl', function($scope, $state, SkillTreeService, keyID, characterID) {
     $scope.character = $scope.instances[keyID].Characters.characters[characterID];
-
+    var skills = $scope.character.skills.row.map(function(item) {
+        var temp = SkillTreeService.get(item._typeID);
+        return { skill: temp.skillName, group: temp.groupName, level: item._level};
+    });
+    $scope.groupedSkills = skills.reduce(function(all, item, index) {
+        if(!Array.isArray(all[item.group])){
+            all[item.group] = [];
+        }
+        all[item.group].push({skill: item.skill, level: item.level});
+        return all;
+    },{});
 })
 .controller('APIKeysCtrl', function($scope, $ionicModal, EVEAPIHolder, APIKeyService, keys) {
     $scope.newkey = {};
