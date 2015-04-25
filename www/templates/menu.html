@@ -25,14 +25,15 @@
       <ion-list>
         <ion-item class='item item-avatar'>
             <img ng-src="http://image.eveonline.com/character/{{user.selectedCharacter}}_512.jpg"></img>
-            <h2>{{user.selectedAPIKey}}</h2>
+            <h2>{{eveApi.characters[user.selectedCharacter].name}}</h2>
             <p>{{user.selectedCharacter}}</p>
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/characters">
-            Characters
-        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/characters">Characters</ion-item>
         <ion-item class="item-divider">Details</ion-item>
-        <ion-item nav-clear menu-close href="#/app/apikeys/{{user.selectedAPIKey}}/characters/{{user.selectedCharacter}}">Sheet</ion-item>
+        <ion-item nav-clear menu-close href="#/app/characters/{{user.selectedCharacter}}">Sheet</ion-item>
+        <ion-item nav-clear menu-close href="#/app/skills/{{user.selectedCharacter}}">Skills</ion-item>
+        <ion-item class="item-divider">Misc</ion-item>
+        <ion-item nav-clear menu-close href="#/app/settings">Settings</ion-item>
       </ion-list>
     </ion-content>
   </ion-side-menu>

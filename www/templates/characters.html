@@ -1,11 +1,11 @@
 <ion-view view-title="Characters">
     <ion-content padding="true" class="has-header">
-        <ion-list ng-repeat="instance in instances">
-            <ion-radio ng-repeat="character in instance.Account.characters" ng-model="user.selectedCharacter" ng-value="character._characterID" ng-change="user.selectedAPIKey=instance.keyID" class="item item-thumbnail-left">
-                <img ng-src="http://image.eveonline.com/character/{{character._characterID}}_512.jpg">
-                <h2>{{character._name}}</h2>
-                <p>{{character._corporationName}}</p>
-                <p>{{character._allianceName}} </p>
+        <ion-list>
+            <ion-radio ng-repeat="character in eveApi.characters" ng-model="user.selectedCharacter" ng-value="character.characterID" ng-change="user.save()" class="item item-thumbnail-left">
+                <img ng-src="http://image.eveonline.com/character/{{character.characterID}}_512.jpg">
+                <h2>{{character.name}}</h2>
+                <p>{{character.corporationName}}</p>
+                <p>{{character.allianceName}} </p>
             </ion-radio>
         </ion-list>
     </ion-content>

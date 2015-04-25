@@ -18,8 +18,15 @@ angular.module('starter', [
 .constant('CONFIG', {
     APIPath: 'https://api.eveonline.com/'
 })
-.run(function($ionicPlatform, EVEAPIHolder, APIKeyService, SkillTreeService) {
+.run(function($ionicPlatform, UserService, EVEAPIHolder, SkillTreeService, ClockService) {
     $ionicPlatform.ready(function() {
+        UserService.init().then(function() {
+            console.log('INIT', 'User Settings Loaded');
+            var logp = function() {
+                console.log('Penis');
+            };
+            ClockService.start(UserService.syncRate);
+        });
         SkillTreeService.init().then(function() {
             if(SkillTreeService.isOutOfDate()){
                 console.log('INIT', 'SkillTree out of date');
@@ -31,14 +38,18 @@ angular.module('starter', [
                 console.log('INIT', 'SkillTree up to date');
             }
         });
-        APIKeyService.init().then(function(resp) {
-            return APIKeyService.listKeys();
-        }).then(function(keys){
-            for(var key in keys){
-                EVEAPIHolder.add(keys[key]);
+        EVEAPIHolder.init().then(function(){
+            console.log(EVEAPIHolder);
+            if(EVEAPIHolder.isOutOfDate()){
+                console.log('INIT', 'Accounts out of date');
+                EVEAPIHolder.refresh().then(function(){
+                    console.log('INIT', 'Accounts refreshed');
+                    EVEAPIHolder.save();
+                    ClockService.addFunction(EVEAPIHolder.refresh);
+                });
+            } else {
+                console.log('INIT', 'Accounts up to date');
             }
-            EVEAPIHolder.refresh();
-            console.log('INIT', EVEAPIHolder);
         });
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -68,11 +79,6 @@ angular.module('starter', [
                 templateUrl: 'templates/apikeys.html',
                 controller: 'APIKeysCtrl'
             }
-        },
-        resolve: {
-            keys: function(APIKeyService){
-                return APIKeyService.listKeys();
-            }
         }
     })
     .state('app.apikey', {
@@ -84,8 +90,8 @@ angular.module('starter', [
             }
         },
         resolve: {
-            key: function(APIKeyService, $stateParams) {
-                return APIKeyService.readKey($stateParams.keyID);
+            keyID: function($stateParams) {
+                return $stateParams.keyID;
             }
         }
     })
@@ -100,7 +106,7 @@ angular.module('starter', [
     })
 
     .state('app.character', {
-        url: '/apikeys/:keyID/characters/:characterID',
+        url: '/characters/:characterID',
         views: {
             'menuContent': {
                 templateUrl: 'templates/charactersheet.html',
@@ -108,11 +114,43 @@ angular.module('starter', [
             }
         },
         resolve: {
-            keyID: function($stateParams) {
-                return $stateParams.keyID;
-            },
             characterID: function($stateParams) {
                 return $stateParams.characterID;
+            }
+        }
+    })
+    .state('app.characterskills', {
+        url: '/skills/:characterID',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/skills.html',
+                controller: 'CharacterSkillsCtrl'
+            }
+        },
+        resolve: {
+            characterID: function($stateParams) {
+                return $stateParams.characterID;
+            },
+            skills: function($q, $stateParams, EVEAPIHolder, $timeout){
+                var dfd = $q.defer();
+                $timeout(function(){
+                    console.log('Fail');
+                    if(typeof EVEAPIHolder.characters[$stateParams.characterID] !== 'undefined'){
+                        if(typeof EVEAPIHolder.characters[$stateParams.characterID] !== 'undefined'){
+                            dfd.resolve();
+                        }
+                    }
+                }, 100);
+                return dfd.promise;
+            }
+        }
+    })
+    .state('app.settings', {
+        url: '/settings',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/settings.html',
+                controller: 'SettingsCtrl'
             }
         }
     });

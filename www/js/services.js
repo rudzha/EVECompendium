@@ -1,89 +1,62 @@
 'use strict';
 angular.module('starter.services', [])
-.service('UserService', function(){
-    this.selectedAPIKey = '';
-    this.selectedCharacter = '';
-})
-.service('APIKeyService', function(EVEAPIHolder, pouchDB, $q){
+.service('UserService', function($q, lodash, pouchDB){
     var localDB = pouchDB('compendium');
-    this.init = function () {
+    var self = this;
+    this.selectedCharacter = '';
+    this.syncRate = 3600;
+    this.init = function() {
         var dfd = $q.defer();
-        localDB.get('APIKeys').then(function(resp){
-            dfd.resolve(resp);
-            //console.log(resp);
-        }).catch(function(err){
-            //console.log(err);
+        localDB.get('UserSettings').then(function(resp) {
+            lodash.assign(self, resp);
+            console.log(self);
+            dfd.resolve();
+        }).catch(function(err) {
+            console.log(err);
             if(err.status === 404) {
-                var keys = {
-                    _id: 'APIKeys',
-                    keys: []
+                var apiKeys = {
+                    _id: 'UserSettings',
+                    selectedCharacter: '',
+                    syncRate: 3600
+
                 };
-                localDB.put(keys);
+                localDB.put(apiKeys).then(function(){
+                    dfd.resolve();
+                });
             }
         });
         return dfd.promise;
     };
-    this.listKeys = function (){
+    this.save = function() {
         var dfd = $q.defer();
-        localDB.get('APIKeys')
-        .then(function(response){
-            dfd.resolve(response.keys);
-        })
-        .catch(function(err){
-            console.log('APIKeyService', err);
-            dfd.resolve([]);
+        localDB.get('UserSettings').then(function(resp) {
+            resp.syncRate = self.syncRate;
+            resp.selectedCharacter = self.selectedCharacter;
+            return localDB.put(resp);
+        }).then(function(resp){
+            dfd.resolve(resp);
         });
         return dfd.promise;
     };
-    this.createKey = function(key) {
-        var dfd = $q.defer();
-        localDB.get('APIKeys')
-        .then(
-            function(apikeys){
-                apikeys.keys.push(key);
-                localDB.put(apikeys);
-                return apikeys;
-            }
-        ).then(function(apikeys){
-            dfd.resolve(apikeys.keys);
-        });
-        EVEAPIHolder.add(key);
-        return dfd.promise;
-    };
-    this.readKey = function (keyid) {
-        var dfd = $q.defer();
-        localDB.get('APIKeys').then(function(response){
-            //console.log(response);
-            response.keys.forEach(function(key){
-                if(key.id === keyid) {
-                    dfd.resolve(key);
-                }
+})
+.service('ClockService', function($interval, lodash){
+    var self = this;
+    this.clock = null;
+    this.functionList = [];
+    this.start = function(rate) {
+        var rateInMilliSeconds = rate * 1000;
+        this.clock = $interval(function(){
+            lodash.forEach(self.functionList, function(item){
+                item();
             });
-        }).catch(function(err){
-            console.log(err);
-        });
-        return dfd.promise;
+        }, rateInMilliSeconds);
     };
-    this.deleteKey = function (keyid) {
-        var dfd = $q.defer();
-        localDB.get('APIKeys')
-        .then(function(response){
-            for(var i = 0; i < response.keys.length; i++){
-                if(response.keys[i].id === keyid) {
-                    response.keys.splice(i, 1);
-                    break;
-                }
-            }
-            localDB.put(response)
-            .then(function(resp){
-                dfd.resolve(resp);
-            }).catch(function(err){
-                console.log(err);
-            });
-        }).catch(function(err){
-            console.log(err);
-        });
-        EVEAPIHolder.delete(keyid);
-        return dfd.promise;
+    this.stop = function() {
+        if(!lodash.isUndefined(self.clock)){
+            $interval.cancel(self.clock);
+        }
+    };
+    this.addFunction = function(fn) {
+        this.functionList.push(fn);
     };
 });

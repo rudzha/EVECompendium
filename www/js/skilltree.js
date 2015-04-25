@@ -34,6 +34,9 @@ angular.module('starter.skilltree', [])
     this.isOutOfDate = function() {
         return ((lodash.now() - self.synced) >= 2629743);
     };
+    this.getSkillTree = function(){
+        return this.skillTree;
+    };
     this.get = function(skillID) {
         return self.skillTree[skillID];
     };
@@ -48,7 +51,6 @@ angular.module('starter.skilltree', [])
             self.synced = now;
             dfd.resolve(resp);
         });
-        console.log(this);
     };
     this.refresh = function () {
         var dfd = $q.defer();

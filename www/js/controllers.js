@@ -1,18 +1,18 @@
 'use strict';
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $state, EVEAPIHolder, UserService) {
+.controller('AppCtrl', function($scope, $state, EVEAPIHolder, UserService, SkillTreeService) {
     $scope.user = UserService;
-    $scope.instances = EVEAPIHolder.instances;
-    $scope.syncRate = 86400;
-    $scope.$watch('selectedCharacter', function(){
-        //console.log($scope.selectedCharacter);
-    });
+    $scope.eveApi = EVEAPIHolder;
     $scope.gotoApiKeys = function(){
         $state.go('app.apikeys');
     };
     $scope.refresh = function (){
-        EVEAPIHolder.refresh();
+        EVEAPIHolder.checkForNewCharacters().then(function(){
+            return EVEAPIHolder.refresh();
+        }).then(function(){
+            EVEAPIHolder.save();
+        });
     };
 })
 .controller('menuCtrl', function($scope, $state) {
@@ -21,26 +21,28 @@ angular.module('starter.controllers', [])
 .controller('CharactersCtrl', function($scope, $state) {
 
 })
-.controller('CharacterSheetCtrl', function($scope, $state, SkillTreeService, keyID, characterID) {
-    $scope.character = $scope.instances[keyID].Characters.characters[characterID];
-    var skills = $scope.character.skills.row.map(function(item) {
-        var temp = SkillTreeService.get(item._typeID);
-        return { skill: temp.skillName, group: temp.groupName, level: item._level};
-    });
-    $scope.groupedSkills = skills.reduce(function(all, item, index) {
-        if(!Array.isArray(all[item.group])){
-            all[item.group] = [];
-        }
-        all[item.group].push({skill: item.skill, level: item.level});
-        return all;
-    },{});
+.controller('CharacterSheetCtrl', function($scope, $state, characterID) {
+    $scope.characterID = characterID;
 })
-.controller('APIKeysCtrl', function($scope, $ionicModal, EVEAPIHolder, APIKeyService, keys) {
+.controller('CharacterSkillsCtrl', function($scope, $state, lodash, EVEAPIHolder, SkillTreeService, characterID, skills) {
+    $scope.characterID = characterID;
+    console.log(characterID, skills);
+    $scope.currentSkills = lodash.map($scope.eveApi.characters[characterID].skills, function(item) {
+        var temp = SkillTreeService.get(item.skillID);
+        return ({skill: temp.skillName, group: temp.groupName, level: item.level});
+    });
+    $scope.allSkills = SkillTreeService.getSkillTree();
+    $scope.allSkills = lodash.transform($scope.allSkills, function(result, item){
+        result.push(item);
+        return result;
+    },[]);
+})
+.controller('APIKeysCtrl', function($scope, $ionicModal, EVEAPIHolder) {
     $scope.newkey = {};
     $ionicModal.fromTemplateUrl('templates/addapikey.html', {
-      scope: $scope
+        scope: $scope
     }).then(function(modal) {
-      $scope.modal = modal;
+        $scope.modal = modal;
     });
 
     $scope.closeAddNewAPIKey = function() {
@@ -52,18 +54,35 @@ angular.module('starter.controllers', [])
     };
 
     $scope.addNewKey = function() {
-        APIKeyService.createKey($scope.newkey).then(function(apikeys) {
-            $scope.apikeys = apikeys;
+        console.log($scope.newkey);
+        EVEAPIHolder.add($scope.newkey).then(function(){
+            return EVEAPIHolder.checkForNewCharacters();
+        }).then(function() {
+            return EVEAPIHolder.refresh();
+        }).then(function() {
+            return EVEAPIHolder.save();
+        }, function(err){
+            EVEAPIHolder.save();
+            return err;
+        }).then(function(){
+            console.log($scope.eveApi);
+            $scope.closeAddNewAPIKey();
+        }).catch(function(err){
+            console.log('AddAPIKey', err);
+            $scope.closeAddNewAPIKey();
         });
-        $scope.closeAddNewAPIKey();
     };
-    $scope.apikeys = keys;
 })
-.controller('APIKeyCtrl', function($scope, $state, APIKeyService, EVEAPIHolder, key) {
-    $scope.apikey = EVEAPIHolder.get(key.id);
-    $scope.apikey.Account.refresh();
+.controller('APIKeyCtrl', function($scope, $state, EVEAPIHolder, keyID) {
+    $scope.keyID = keyID;
     $scope.delete = function(){
-        APIKeyService.deleteKey($scope.apikey.keyID);
-        $state.go('app.apikeys');
+        EVEAPIHolder.delete(keyID).then(function() {
+            return EVEAPIHolder.save();
+        }).then(function(){
+            $state.go('app.apikeys');
+        });
     };
+})
+.controller('SettingsCtrl', function($scope, UserService) {
+    $scope.settings = UserService;
 });
