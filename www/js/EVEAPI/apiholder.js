@@ -46,6 +46,8 @@ angular.module('compendium.apiholder', [])
         self.accounts[key.id] = new EVEAccount(key.name, key.id, key.code);
         self.accounts[key.id].refresh().then(function(){
             dfd.resolve(self.accounts[key.id]);
+        }).catch(function(error){
+            dfd.reject(error);
         });
         return dfd.promise;
     };
@@ -78,6 +80,16 @@ angular.module('compendium.apiholder', [])
         promises.push(localDB.put(apiKeys));
         promises.push(localDB.put(characters));
         return $q.all(promises);
+    };
+    this.delete = function(keyID) {
+        var dfd = $q.defer();
+        var self = this;
+        lodash.each(self.accounts[keyID].characters, function(character){
+            delete self.characters[character];
+        });
+        delete self.accounts[keyID];
+        dfd.resolve();
+        return dfd.promise;
     };
     this.isOutOfDate = function() {
         var self = this;
@@ -139,81 +151,4 @@ angular.module('compendium.apiholder', [])
         dfd.resolve();
         return dfd.promise;
     };
-    /*
-
-    this.checkForNewCharacters = function () {
-        var self = this;
-        var dfd = $q.defer();
-        var newchar = false;
-        lodash.each(self.accounts, function(key) {
-            lodash.each(key.characters, function(char){
-                if(typeof self.characters[char] === 'undefined') {
-                    self.add(char);
-                    self.skillqueues[char] = new SkillQueue(char);
-                    newchar = true;
-                }
-            });
-        });
-        dfd.resolve(newchar);
-        return dfd.promise;
-    };
-    this.addKey = function(key) {
-        var dfd = $q.defer();
-        var self = this;
-        self.accounts[key.id] = new EVEAccount(key.name, key.id, key.code);
-        self.accounts[key.id].refresh().then(function(){
-            dfd.resolve(self.accounts[key.id]);
-        });
-        return dfd.promise;
-    };
-    this.delete = function(keyID) {
-        var dfd = $q.defer();
-        var self = this;
-        lodash.each(self.accounts[keyID].characters, function(char){
-            delete self.characters[char];
-        });
-        delete self.accounts[keyID];
-        dfd.resolve();
-        return dfd.promise;
-    };
-    this.save = function() {
-        var self = this;
-        var dfd = $q.defer();
-        var now = lodash.now();
-        localDB.get('APIKeys').then(function(resp) {
-            console.log(self.accounts, self.characters, self.skillqueues);
-            resp.synced = now;
-            resp.accounts = self.accounts;
-            resp.characters = self.characters;
-            resp.skillqueues = self.skillqueues;
-            return localDB.put(resp);
-        }).then(function(resp){
-            console.log(resp);
-            self.synced = now;
-            dfd.resolve(resp);
-        }).catch(function(err){
-            console.log(err);
-        });
-        return dfd.promise;
-    };
-    this.refresh = function() {
-        var self = this;
-        var dfd = $q.defer();
-        var deferedArray = [];
-        lodash.each(self.accounts, function(key){
-            deferedArray.push(key.refresh());
-            lodash.each(key.characters, function(char) {
-                deferedArray.push(self.characters[char].refresh(key.keyID, key.verificationCode));
-                deferedArray.push(self.skillqueues[char].refresh(key.keyID, key.verificationCode));
-            });
-        });
-        $q.all(deferedArray).then(function(){
-            dfd.resolve();
-        }).catch(function(err){
-            console.log(err);
-            dfd.reject(err);
-        });
-        return dfd.promise;
-    };
-    */
 });

@@ -42,7 +42,8 @@ angular.module('compendium.controllers', [])
 })
 .controller('APIKeysCtrl', function($scope, $ionicModal) {
     //TODO: remove, here for testing purposes
-    $scope.newkey = {};
+    $scope.newkey = {
+    };
     $ionicModal.fromTemplateUrl('templates/addapikey.html', {
         scope: $scope
     }).then(function(modal) {
@@ -78,6 +79,8 @@ angular.module('compendium.controllers', [])
             return $scope.eveApi.save();
         }).then(function(){
             $state.go('app.apikeys');
+        }).catch(function(error){
+            console.log(error);
         });
     };
 })
