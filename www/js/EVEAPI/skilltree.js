@@ -1,10 +1,6 @@
 'use strict';
-angular.module('starter.skilltree', [])
-.service('SkillTreeService', function($http, $q, CONFIG, x2js, pouchDB, lodash) {
-    var extractXML = function(xml){
-        var json = x2js.xml_str2json(xml.data);
-        return json.eveapi.result;
-    };
+angular.module('compendium.skilltree', [])
+.service('SkillTreeService', function($http, $q, CONFIG, XML2JSON, pouchDB, lodash) {
     var localDB = pouchDB('compendium');
     var self = this;
     this.synced = 0;
@@ -12,6 +8,7 @@ angular.module('starter.skilltree', [])
     this.init = function () {
         var dfd = $q.defer();
         localDB.get('SkillTree').then(function(resp){
+            console.log(resp.synced);
             self.skillTree = resp.skills;
             self.synced = resp.synced;
             dfd.resolve();
@@ -56,7 +53,7 @@ angular.module('starter.skilltree', [])
         var dfd = $q.defer();
         $http.get(CONFIG.APIPath + 'eve/skilltree.xml.aspx', {})
         .then(function(resp) {
-            var data = extractXML(resp);
+            var data = XML2JSON.extractXML(resp);
             self.skillTree = lodash.chain(data.rowset.row)
             .transform(function(result, item) {
                 var newitem = {

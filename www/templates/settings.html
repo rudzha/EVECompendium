@@ -5,8 +5,8 @@
                 <h2>Synchronization</h2>
                 <div class="item range range-positive">
                     <i class="icon ion-android-time"></i>
-                    <input type="range" name="rate" min="900" max="21600" ng-change="settings.save()" ng-model="settings.syncRate">
-                    <p>{{settings.syncRate * 1000 | date : 'HH:mm' : 'UTC'}}</p>
+                    <input type="range" name="rate" min="900" max="21600" ng-change="userService.save()" ng-model="userService.syncRate">
+                    <p>{{userService.syncRate * 1000 | date : 'HH:mm' : 'UTC'}}</p>
                 </div>
             </div>
         </div>

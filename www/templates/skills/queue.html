@@ -1,0 +1,11 @@
+<ion-view title="Skill Queue">
+    <ion-content has-tabs>
+        <ion-list>
+            <ion-item collection-repeat="skill in queue">
+                <span>{{skill.name}}</span>
+                <span>{{skill.level}}</span>
+                <span class="item-note">{{skill.endTime | date : 'medium'}}</span>
+            </ion-item>
+        </ion-list>
+    <ion-content>
+</ion-view>

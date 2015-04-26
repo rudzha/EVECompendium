@@ -1,0 +1,22 @@
+<ion-view title="Current Skills">
+    <ion-content>
+        <div>
+            <label class="item item-input">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input ng-model="SkillSearch.skill" type="search" placeholder="Search">
+            </label>
+        </div>
+        <ion-list>
+            <div ng-repeat="group in currentSkills | filter:skillSearch | GroupBy: 'group'" ng-click="showgroup = (showgroup) ? false : true">
+                <ion-item class="item item-icon-left">
+                    <i class="icon" ng-class="(showgroup) ? 'ion-arrow-down-b' : 'ion-arrow-right-b'"></i>
+                    {{group}}
+                </ion-item>
+                <ion-item ng-show="showgroup" ng-repeat="skill in currentSkills | filter:SkillSearch | filter: group">
+                    <span>{{skill.skill}}</span>
+                    <span class="item-note">{{skill.level}}</span>
+                </ion-item>
+            </div>
+        </ion-list>
+    <ion-content>
+</ion-view>

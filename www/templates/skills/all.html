@@ -1,0 +1,15 @@
+<ion-view title="All Skills">
+    <ion-content has-tabs-top="false" has-tabs="false" has-header="false">
+        <div>
+            <label class="item item-input">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input ng-model="allSkillSearch.skillName" type="search" placeholder="Search">
+            </label>
+        </div>
+        <ion-list>
+            <ion-item collection-repeat="skill in allSkills | filter: allSkillSearch">
+                {{skill.skillName}}
+            </ion-item>
+        </ion-list>
+    <ion-content>
+</ion-view>
