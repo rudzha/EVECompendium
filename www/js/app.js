@@ -10,7 +10,9 @@ angular.module('compendium', [
         'compendium.controllers',
         'compendium.services',
         'compendium.apiholder',
+        'compendium.account',
         'compendium.characters',
+        'compendium.skillqueue',
         'compendium.skilltree',
         'compendium.filters',
         'ngLodash',
@@ -34,7 +36,8 @@ angular.module('compendium', [
         });
     })
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+    $ionicConfigProvider.views.transition('android');
     $stateProvider
         .state('app', {
             url: '/app',
@@ -63,7 +66,6 @@ angular.module('compendium', [
                                 console.log(error);
                             }).then(function(){
                                 console.log('INIT', 'Characters refreshed');
-                                EVEAPIHolder.save();
                                 ClockService.addFunction(EVEAPIHolder.refresh);
                                 dfd.resolve(EVEAPIHolder);
                             });

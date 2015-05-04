@@ -1,6 +1,6 @@
 <ion-side-menus enable-menu-with-back-views="true">
   <ion-side-menu-content>
-    <ion-nav-bar class="bar-stable">
+    <ion-nav-bar class="bar">
       <ion-nav-back-button>
       </ion-nav-back-button>
       <ion-nav-buttons side="left">
@@ -15,22 +15,31 @@
     <ion-nav-view name="menuContent"></ion-nav-view>
   </ion-side-menu-content>
   <ion-side-menu side="left">
-    <ion-header-bar class="bar-stable">
-      <h1 class="title">Left</h1>
+    <ion-header-bar class="bar">
+      <h1 class="title">Menu</h1>
     </ion-header-bar>
     <ion-content ng-controller="menuCtrl">
       <ion-list>
-        <ion-item class='item item-avatar'>
+        <ion-item class='item item-divider item-avatar'>
             <img ng-src="http://image.eveonline.com/character/{{userService.selectedCharacter}}_512.jpg"></img>
             <h2>{{eveApi.characters[userService.selectedCharacter].name}}</h2>
             <p>{{userService.selectedCharacter}}</p>
+            <br/>
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/characters">Characters</ion-item>
+        <ion-item nav-clear menu-close href="#/app/characters">
+            <p>Characters</p>
+        </ion-item>
         <ion-item class="item-divider">Details</ion-item>
-        <ion-item nav-clear menu-close href="#/app/characters/{{userService.selectedCharacter}}">Sheet</ion-item>
-        <ion-item nav-clear menu-close href="#/app/skills/current">Skills</ion-item>
+        <ion-item nav-clear menu-close href="#/app/characters/{{userService.selectedCharacter}}">
+            <p>Sheet</p>
+        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/skills/current">
+            <p>Skills</p>
+        </ion-item>
         <ion-item class="item-divider">Misc</ion-item>
-        <ion-item nav-clear menu-close href="#/app/settings">Settings</ion-item>
+        <ion-item nav-clear menu-close href="#/app/settings">
+            <p>Settings</p>
+        </ion-item>
       </ion-list>
     </ion-content>
   </ion-side-menu>

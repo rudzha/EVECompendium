@@ -10,6 +10,7 @@ angular.module('compendium.services', [])
     var self = this;
     this.selectedCharacter = '';
     this.syncRate = 3600;
+    this.synced = 0;
     this.init = function() {
         var dfd = $q.defer();
         localDB.get('UserSettings').then(function(resp) {
@@ -22,8 +23,8 @@ angular.module('compendium.services', [])
                 var apiKeys = {
                     _id: 'UserSettings',
                     selectedCharacter: '',
-                    syncRate: 3600
-
+                    syncRate: 3600,
+                    synced: 0
                 };
                 localDB.put(apiKeys).then(function(){
                     dfd.resolve();
@@ -37,9 +38,12 @@ angular.module('compendium.services', [])
         localDB.get('UserSettings').then(function(resp) {
             resp.syncRate = self.syncRate;
             resp.selectedCharacter = self.selectedCharacter;
+            resp.synced = self.synced;
             return localDB.put(resp);
         }).then(function(resp){
             dfd.resolve(resp);
+        }).catch(function(error){
+            dfd.reject(error);
         });
         return dfd.promise;
     };

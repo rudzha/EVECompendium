@@ -4,105 +4,145 @@ angular.module('compendium.apiholder', [])
     var localDB = pouchDB('compendium');
     this.accounts = {};
     this.characters = {};
-    this.synced = 0;
     this.init = function() {
         var self = this;
         var promises = [];
-        var apiKeys = localDB.get('APIKeys').then(function(response) {
-            self.synced = response.synced;
-            self.accounts = lodash.transform(response.accounts, function(result, item) {
-                console.log(item);
-                result[item.keyID] = lodash.create(EVEAccount.prototype, item);
+        var apiKeys = localDB.allDocs({include_docs: true, startkey: 'Account-', endkey: 'Account-\uffff'}).then(function(response){
+            self.accounts = lodash.transform(response.rows, function(result, item) {
+                result[item.doc.keyID] = lodash.create(EVEAccount.prototype, item.doc);
                 return result;
-            }, {});
-            return self.accounts;
+            },{});
+            return response;
         }).catch(function(error){
-            if(error.status === 404) {
-                return self.createDatabases();
-            }
+            console.log('EVEAPI:init', error);
+            return error;
         });
-        var characters = localDB.get('Characters').then(function(response) {
-            self.characters = lodash.transform(response.characters, function(result, item) {
-                console.log(item);
-                result[item.characterID] = lodash.create(EVECharacter.prototype, item);
-                result[item.characterID].skillQueue = lodash.create(SkillQueue.prototype, item.skillQueue);
+        var characters = localDB.allDocs({include_docs: true, startkey: 'Character-', endkey: 'Character-\uffff'}).then(function(response){
+            self.characters = lodash.transform(response.rows, function(result, item){
+                result[item.doc.characterID] = lodash.create(EVECharacter.prototype, item.doc);
                 return result;
+            },{});
+            return response;
+        }).catch(function(error){
+            console.log('EVEAPI:init', error);
+        });
+        var skillqueue = localDB.allDocs({include_docs: true, startkey: 'SkillQueue-', endkey: 'SkillQueue-\uffff'}).then(function(response){
+            lodash.each(response.rows, function(item){
+                self.characters[item.doc.characterID].skillQueue = lodash.create(SkillQueue.prototype, item.doc);
             });
-            return self.characters;
+            return response;
         }).catch(function(error){
-            if(error.status === 404) {
-                console.log('Still undefined?');
-            }
+            console.log('EVEAPI:init', error);
         });
-        console.log(apiKeys);
         promises.push(apiKeys);
         promises.push(characters);
+        promises.push(skillqueue);
         return $q.all(promises);
     };
     this.addKey = function(key) {
         var self = this;
         var dfd = $q.defer();
-        console.log(key);
         self.accounts[key.id] = new EVEAccount(key.name, key.id, key.code);
-        self.accounts[key.id].refresh().then(function(){
-            dfd.resolve(self.accounts[key.id]);
+        self.accounts[key.id].refresh().then(function(response) {
+            return self.accounts[key.id].save();
+        }).then(function(response){
+            dfd.resolve(response);
+        })
+        .catch(function(error){
+            dfd.reject(error);
+        });
+        return dfd.promise;
+    };
+    this.deleteKey = function(account) {
+        var self = this;
+        var dfd = $q.defer();
+        lodash.each(account.characters, function(item) {
+            self.characters[item].skillQueue.delete().then(function(response){
+                delete self.characters[item].skillQueue;
+                return self.characters[item].delete();
+            }, function(error){
+                return error;
+            }).then(function(response){
+                delete self.characters[item];
+            }).catch(function(error){
+                console.log(error);
+                dfd.reject(error);
+            });
+        });
+        account.delete().then(function(response){
+            delete self.accounts[account.keyID];
+            dfd.resolve(response);
+        }).catch(function(error){
+            console.log(error);
+            dfd.reject(error);
+        });
+        return dfd.promise;
+    };
+    this.addCharacter = function(account, characterID) {
+        var self = this;
+        var dfd = $q.defer();
+        self.characters[characterID] = new EVECharacter(characterID);
+        self.characters[characterID].refresh(account.keyID, account.verificationCode).then(function(response) {
+            return self.characters[characterID].save();
+        }).then(function(response){
+            dfd.resolve(response);
+        }).catch(function(error){
+            dfd.reject(error);
+        });
+        console.log('EVEAPI:addCharacter', self.characters[characterID]);
+        return dfd.promise;
+    };
+    this.addSkillQueue = function(account, characterID) {
+        var self = this;
+        var dfd  = $q.defer();
+        self.characters[characterID].skillQueue = new SkillQueue(characterID);
+        self.characters[characterID].skillQueue.refresh(account.keyID, account.verificationCode).then(function(response){
+            return self.characters[characterID].skillQueue.save();
+        }).then(function(response){
+            dfd.resolve(response);
         }).catch(function(error){
             dfd.reject(error);
         });
         return dfd.promise;
     };
-    this.addCharacter = function(character) {
-        var self = this;
-        var dfd = $q.defer();
-        self.characters[character] = new EVECharacter(character);
-        console.log('EVEAPI:addCharacter', self.characters[character]);
-        dfd.resolve(self.characters[character]);
-        return dfd.promise;
-    };
-    this.addSkillQueue = function(character) {
-        var self = this;
-        var dfd  = $q.defer();
-        self.characters[character].skillQueue = new SkillQueue(character);
-        dfd.resolve(self.characters[character].skillQueue);
-        return dfd.promise;
-    };
-    this.createDatabases = function() {
-        var promises = [];
-        var apiKeys = {
-            _id: 'APIKeys',
-            accounts: {},
-            synced: 0
-        };
-        var characters = {
-            _id: 'Characters',
-            characters: {}
-        };
-        promises.push(localDB.put(apiKeys));
-        promises.push(localDB.put(characters));
-        return $q.all(promises);
-    };
-    this.delete = function(keyID) {
-        var dfd = $q.defer();
-        var self = this;
-        lodash.each(self.accounts[keyID].characters, function(character){
-            delete self.characters[character];
-        });
-        delete self.accounts[keyID];
-        dfd.resolve();
-        return dfd.promise;
-    };
+    //TODO: Figure where to store synced status
     this.isOutOfDate = function() {
         var self = this;
-        return ((lodash.now() - self.synced) >= UserService.syncRate);
+        return ((lodash.now() - UserService.synced) >= UserService.syncRate*1000);
     };
     this.refresh = function() {
         var self = this;
         var promises = [];
         lodash.each(self.accounts, function(account){
+            console.log('does it break here?', account.keyID);
             account.refresh().then(function() {
+                UserService.synced = lodash.now();
+                promises.push(UserService.save());
+                promises.push(account.save().then(function(response){
+                    console.log('EVEAPI:refresh'. response);
+                    return response;
+                }).catch(function(error){
+                    console.log('EVEAPI:refresh', error);
+                    return error;
+                }));
                 lodash.each(account.characters, function(character) {
-                    promises.push(self.characters[character].refresh(account.keyID, account.verificationCode));
-                    promises.push(self.characters[character].skillQueue.refresh(account.keyID, account.verificationCode));
+                    self.characters[character].refresh(account.keyID, account.verificationCode).then(function(response){
+                        promises.push(self.characters[character].save().then(function(response) {
+                            console.log('EVEAPI:refresh', response);
+                            dfd.resolve(response);
+                        }).catch(function(error){
+                            console.log('EVEAPI:refresh', error);
+                            dfd.reject(error);
+                        }));
+                    });
+                    self.characters[character].skillQueue.refresh(account.keyID, account.verificationCode).then(function(response){
+                        promises.push(self.characters[character].skillQueue.save().then(function(response) {
+                            console.log('EVEAPI:refresh', response);
+                            dfd.resolve(self.characters[character].skillQueue);
+                        }).catch(function(error){
+                            console.log('EVEAPI:refresh', error);
+                        }));
+                    });
                 });
             });
         });
@@ -111,44 +151,22 @@ angular.module('compendium.apiholder', [])
             dfd.reject('Nothing to update');
             return dfd.promise;
         }
-        console.log(promises);
-        return $q.all[promises];
-    };
-    this.save = function() {
-        var self = this;
-        var now = lodash.now();
-        var promises = [];
-        var apiKeys = localDB.get('APIKeys').then(function(response) {
-            response.synced = now;
-            response.accounts = self.accounts;
-            return localDB.put(response);
-        });
-        var characters = localDB.get('Characters').then(function(response) {
-            console.log(self.characters);
-            response.characters = self.characters;
-            return localDB.put(response);
-        });
-        promises.push(apiKeys);
-        promises.push(characters);
-        return $q.all[promises];
+        return $q.all(promises);
     };
     this.updateCharacters = function() {
         var self = this;
-        var dfd = $q.defer();
+        var promises = [];
         lodash.each(self.accounts, function(account) {
             lodash.each(account.characters, function(character){
                 if(typeof self.characters[character] === 'undefined') {
-                    self.addCharacter(character).then(function(response) {
-                        return self.characters[character].refresh(account.keyID, account.verificationCode);
-                    }).then(function(response){
-                        return self.addSkillQueue(character);
-                    }).then(function(response){
-                        return self.characters[character].skillQueue.refresh(account.keyID, account.verificationCode);
-                    });
+                    promises.push(self.addCharacter(account, character).then(function(response){
+                        return self.addSkillQueue(account, character);
+                    }, function(error){
+                        return error;
+                    }));
                 }
             });
         });
-        dfd.resolve();
-        return dfd.promise;
+        return $q.all(promises);
     };
 });

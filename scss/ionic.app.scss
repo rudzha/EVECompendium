@@ -20,22 +20,103 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
+$EVEbackground: #1C1C1C;
+$EVEbars: #161616;
+$EVEheadings: #FFA500;
+$EVEtext: #FFFFFF;
+$EVElinks: #2980B9;
+$EVEbutton: #434343;
+$EVEbuttonactive: #272727;
+body {
+    color: $EVEtext;
+}
+.pane, .view .menu, .modal {
+    background-color: $EVEbackground;
+}
+.button-clear.button-clear {
+    color: $EVElinks;
+}
+.bar {
+    background-color: $EVEbars !important;
+    border-bottom-color: $EVEbars !important;
+    box-shadow: 0px 2px 5px #000;
+}
+.title {
+    color: $EVEheadings;
+}
 
-.slider {
-    padding-top:10%;
-    height: 100%;
+.list {
+    box-shadow: 0px 2px 5px #000 !important;
 }
-.slider-slide {
-    text-align: center;
-    text-justify: middle;
+.card {
+    border-radius: 4px;
+    background-color: transparent;
 }
-
-.blue {
-    background-color: #5e80ff;
+.card .item-divider {
+    z-index: 2;
+    background-color: $EVEbuttonactive !important;
 }
-.yellow {
-    background-color: #e9da35;
+.card .item {
+    background-color: $EVEbutton;
 }
-.pink {
-    background-color: #ff5fcf;
+.item-floating-label {
+    background-color: $EVEbutton;
+}
+.item {
+    background: $EVEbutton;
+    color: $EVEtext;
+    border-color: $EVEbuttonactive;
+}
+.item.active {
+    background-color: $EVEbuttonactive;
+}
+.item .input-label {
+    color: $EVEbuttonactive;
+}
+.item input {
+    color: $EVEtext;
+}
+.item .item-content{
+    background-color: $EVEbutton !important;
+}
+.item h1, h2{
+    color: $EVEheadings !important;
+}
+.item p{
+    color: $EVEtext !important;
+}
+.item-divider {
+    background-color: $EVEbackground !important;
+    z-index: 1;
+    color: $EVEheadings;
+}
+.item-radio .item-content {
+    background-color: $EVEbutton !important;
+}
+.item-radio input:checked ~ .item-content {
+    background-color: $EVEbuttonactive !important;
+}
+.list .item-radio {
+    box-shadow: 0px 2px 5px #000;
+    border: none;
+}
+.item-radio .icon, .item .icon {
+    color: $EVEheadings !important;
+}
+.item-radio .item-content h2 {
+    color: $EVEheadings !important;
+}
+.item-radio .item-content p {
+    color: $EVEtext !important;
+}
+.ion-navicon, .ion-refresh, .ion-key {
+    color: $EVEheadings !important;
+}
+.tabs-striped .tabs {
+    background-color: $EVEbackground;
+    color: $EVElinks;
+    border: none;
+}
+.tabs-striped .tab-item.tab-item-active {
+    border-color: $EVElinks;
 }

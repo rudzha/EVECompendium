@@ -20,8 +20,11 @@ angular.module('compendium.skilltree', [])
                     skills: {},
                     synced: 0
                 };
-                localDB.put(skillTree).then(function(){
-                    dfd.resolve();
+                localDB.put(skillTree).then(function(response){
+                    dfd.resolve(response);
+                }).catch(function(error){
+                    console.log(error);
+                    dfd.reject(error);
                 });
             }
         });

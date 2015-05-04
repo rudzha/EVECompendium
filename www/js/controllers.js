@@ -9,10 +9,12 @@ angular.module('compendium.controllers', [])
         $state.go('app.apikeys');
     };
     $scope.refresh = function (){
-        $scope.eveApi.updateCharacters().then(function(){
+        $scope.eveApi.updateCharacters().then(function(response){
             return $scope.eveApi.refresh();
-        }).then(function(){
-            $scope.eveApi.save();
+        }).then(function(response){
+            console.log('TOPSCOPE:refresh', response);
+        }).catch(function(error){
+            console.log('TOPSCOPE:refresh', error);
         });
     };
 })
@@ -43,6 +45,9 @@ angular.module('compendium.controllers', [])
 .controller('APIKeysCtrl', function($scope, $ionicModal) {
     //TODO: remove, here for testing purposes
     $scope.newkey = {
+        name: 'test',
+        id: '4020716',
+        code: 'QqV3kTFvWKLpnj51XyJKeuCFFSl4vxlsmu16u287pV8TX0M4Mf8JZHea3uudseXB'
     };
     $ionicModal.fromTemplateUrl('templates/addapikey.html', {
         scope: $scope
@@ -52,35 +57,31 @@ angular.module('compendium.controllers', [])
     $scope.closeAddNewAPIKey = function() {
       $scope.modal.hide();
     };
-
     $scope.addNewAPIKey = function() {
       $scope.modal.show();
     };
     $scope.addNewKey = function() {
-        console.log($scope.newkey);
         $scope.eveApi.addKey($scope.newkey).then(function(response){
             console.log('CONTROLERS:ADD_NEW_KEY', response);
             return $scope.eveApi.updateCharacters();
         }, function(error){
             console.log(error);
-        }).then(function(response){
-            return $scope.eveApi.save();
-        }, function(error){
-            console.log(error);
-        }).then(function(response){
+        }).then(function(response) {
+            console.log(response);
             $scope.closeAddNewAPIKey();
+        }).catch(function(error){
+            console.log(error);
         });
     };
 })
 .controller('APIKeyCtrl', function($scope, $state, keyID) {
     $scope.keyID = keyID;
     $scope.delete = function(){
-        $scope.eveApi.delete(keyID).then(function() {
-            return $scope.eveApi.save();
-        }).then(function(){
+        $scope.eveApi.deleteKey($scope.eveApi.accounts[keyID]).then(function(response) {
+            console.log('APIKeyCtrl:delete', response);
             $state.go('app.apikeys');
-        }).catch(function(error){
-            console.log(error);
+        }).catch(function(error) {
+            console.log('APIKeyCtrl:delete', error);
         });
     };
 })

@@ -3,7 +3,7 @@
         <button ng-click="addNewAPIKey()" class="button button-block">Add new API key</button>
         <ion-list>
             <ion-item ng-repeat="account in eveApi.accounts" href="#/app/apikeys/{{account.keyID}}">
-                {{account.name}}
+                <h2>{{account.name}}</h2>
                 <span class="badge" ng-class="(account.status === 'Synced') ? 'badge-balanced' : 'badge-assertive'">{{account.status}}</span>
             </ion-item>
         </ion-list>
