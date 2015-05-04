@@ -74,7 +74,7 @@ angular.module('compendium.skilltree', [])
                         groupName: item.groupName,
                         skillID: skill._typeID,
                         skillName: skill._typeName,
-                        description: skill.description,
+                        description: skill.description.replace(/\n/g, '<br>'),
                         rank: lodash.parseInt(skill.rank),
                         requiredAttributes: skill.requiredAttributes,
                         requiredSkills: lodash.isUndefined(skill.rowset[0].row) ? [] :

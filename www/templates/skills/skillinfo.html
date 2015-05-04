@@ -1,0 +1,36 @@
+<ion-modal-view>
+    <ion-header-bar>
+        <h1 class="title">{{skillInfo.skillName}}</h1>
+        <div class="buttons">
+            <button class="button button-clear" ng-click="closeSkillInfo()">Close</button>
+        </div>
+    </ion-header-bar>
+    <ion-content padding="true" scroll="false" class="has-header">
+        <div class="list card padded">
+            <div class="item">
+                <h2>Group</h2>
+                <p>{{skillInfo.groupName}}</p>
+            </div>
+            <div class="item item-text-wrap">
+                <h2>Description</h2>
+                <p ng-bind-html="trustAsHtml(skillInfo.description)"></p>
+            </div>
+            <div class="item">
+                <h2>Attributes</h2>
+                <p>Primary
+                    <span class="item-note">{{skillInfo.requiredAttributes.primaryAttribute}}</span>
+                </p>
+                <p>Secondary
+                    <span class="item-note">{{skillInfo.requiredAttributes.secondaryAttribute}}</span>
+                </p>
+            </div>
+            <div class="item">
+                <h2>Required skills</h2>
+                <p ng-repeat="reqSkill in skillInfo.requiredSkills">
+                    <span>{{reqSkill.skillName}}</span>
+                    <span class="item-note">{{reqSkill.level}}</span>
+                </p>
+            </div>
+        </div>
+    </ion-content>
+</ion-modal-view>

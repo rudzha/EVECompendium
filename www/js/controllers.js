@@ -23,17 +23,34 @@ angular.module('compendium.controllers', [])
 .controller('CharacterSheetCtrl', function($scope, characterID) {
      $scope.characterID = characterID;
 })
-.controller('CharacterSkillsCtrl', function() {})
+.controller('CharacterSkillsCtrl', function($scope, $sce, $ionicModal, lodash) {
+    $scope.trustAsHtml = $sce.trustAsHtml;
+    $ionicModal.fromTemplateUrl('templates/skills/skillinfo.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.modal = modal;
+    });
+    $scope.openSkillInfo = function(skillID) {
+        $scope.skillInfo = $scope.skillTree.get(skillID);
+        lodash.each($scope.skillInfo.requiredSkills, function(item){
+            item.skillName = $scope.skillTree.get(item.skillID).skillName;
+        });
+        $scope.modal.show();
+    };
+    $scope.closeSkillInfo = function() {
+        $scope.modal.hide();
+    };
+})
 .controller('SkillsQueueCtrl', function($scope, lodash) {
     $scope.queue = lodash.map($scope.eveApi.characters[$scope.userService.selectedCharacter].skillQueue.queue, function(item){
         var temp = $scope.skillTree.get(item.skillID);
-        return {name: temp.skillName, level: item.level, endTime: item.endTime};
+        return {skillID: item.skillID, name: temp.skillName, level: item.level, endTime: item.endTime};
     });
 })
 .controller('SkillsCurrentCtrl', function($scope, lodash) {
     $scope.currentSkills = lodash.map($scope.eveApi.characters[$scope.userService.selectedCharacter].skills, function(item) {
         var temp = $scope.skillTree.get(item.skillID);
-        return ({skill: temp.skillName, group: temp.groupName, level: item.level});
+        return ({skillID: item.skillID, skill: temp.skillName, group: temp.groupName, level: item.level});
     });
 })
 .controller('SkillsAllCtrl', function($scope, lodash) {

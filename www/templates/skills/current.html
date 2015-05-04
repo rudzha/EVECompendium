@@ -7,12 +7,12 @@
             </label>
         </div>
         <ion-list>
-            <div ng-repeat="group in currentSkills | filter:skillSearch | GroupBy: 'group'" ng-click="showgroup = (showgroup) ? false : true">
-                <ion-item class="item item-icon-left"  ng-class="{'active': showgroup}">
+            <div ng-repeat="group in currentSkills | filter: SkillSearch | GroupBy: 'group' | filter: group" ng-click="showgroup = (showgroup) ? false : true">
+                <ion-item class="item item-icon-left" ng-class="{'active': showgroup}">
                     <i class="icon" ng-class="(showgroup) ? 'ion-arrow-down-b' : 'ion-arrow-right-b'"></i>
                     {{group}}
                 </ion-item>
-                <ion-item ng-show="showgroup" ng-repeat="skill in currentSkills | filter:SkillSearch | filter: group">
+                <ion-item ng-show="showgroup" ng-repeat="skill in currentSkills | filter: group | filter:SkillSearch" ng-click="openSkillInfo(skill.skillID)">
                     <span>{{skill.skill}}</span>
                     <span class="item-note">{{skill.level}}</span>
                 </ion-item>

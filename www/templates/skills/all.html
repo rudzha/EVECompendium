@@ -7,7 +7,7 @@
             </label>
         </div>
         <ion-list>
-            <ion-item collection-repeat="skill in allSkills | filter: allSkillSearch">
+            <ion-item collection-repeat="skill in allSkills | filter: allSkillSearch" ng-click="openSkillInfo(skill.skillID)">
                 {{skill.skillName}}
             </ion-item>
         </ion-list>
