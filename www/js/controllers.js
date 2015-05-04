@@ -24,6 +24,7 @@ angular.module('compendium.controllers', [])
      $scope.characterID = characterID;
 })
 .controller('CharacterSkillsCtrl', function($scope, $sce, $ionicModal, lodash) {
+    $scope.now = lodash.now();
     $scope.trustAsHtml = $sce.trustAsHtml;
     $ionicModal.fromTemplateUrl('templates/skills/skillinfo.html', {
         scope: $scope
@@ -44,7 +45,7 @@ angular.module('compendium.controllers', [])
 .controller('SkillsQueueCtrl', function($scope, lodash) {
     $scope.queue = lodash.map($scope.eveApi.characters[$scope.userService.selectedCharacter].skillQueue.queue, function(item){
         var temp = $scope.skillTree.get(item.skillID);
-        return {skillID: item.skillID, name: temp.skillName, level: item.level, endTime: item.endTime};
+        return {skillID: item.skillID, name: temp.skillName, level: item.level, startTime: item.startTime, endTime: item.endTime};
     });
 })
 .controller('SkillsCurrentCtrl', function($scope, lodash) {

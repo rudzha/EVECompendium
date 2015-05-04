@@ -37,7 +37,6 @@ angular.module('compendium', [
     })
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
-    $ionicConfigProvider.views.transition('android');
     $stateProvider
         .state('app', {
             url: '/app',

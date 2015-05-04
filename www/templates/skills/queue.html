@@ -1,10 +1,35 @@
 <ion-view title="Skill Queue">
     <ion-content has-tabs>
         <ion-list>
-            <ion-item collection-repeat="skill in queue" item-height="50" ng-click="openSkillInfo(skill.skillID)">
-                <span>{{skill.name}}</span>
-                <span>{{skill.level}}</span>
-                <span class="item-note">{{skill.endTime | date : 'medium'}}</span>
+            <ion-item ng-init="first = (queue | First)">
+                <h2>Currently training</h2>
+                <p>{{first.name}} {{(queue | First).level}}</p>
+                <p>{{first.endTime | TimeDifference: now}} left</p>
+                <div class="SkillMeter" style="background: linear-gradient(
+                            90deg,
+                            #2980B9 {{((now-first.startTime)/(first.endTime-first.startTime))*100}}%,
+                            #000000 1%
+                        );">
+                </div>
+            </ion-item>
+            <ion-item ng-init="last = (queue | Last)">
+                <h2>Skill queue</h2>
+                <p>Ends on {{last.endTime | date: 'medium'}}</p>
+                <p>{{last.endTime | TimeDifference: now}} left</p>
+            </ion-item>
+            <ion-item collection-repeat="skill in queue" item-height="75" ng-click="openSkillInfo(skill.skillID)">
+                <span>{{skill.name}} - {{skill.level}}</span>
+                <p>{{skill.endTime | date : 'medium'}}</p>
+                <div class="SkillMeter" style="background: linear-gradient(
+                            90deg,
+                            #000000 0%,
+                            #000000 {{(((skill.startTime - now > 0) ? (skill.startTime - now) : 0)/(userService.queueMeterDays*86400000))*100}}%,
+                            #2980B9 {{(((skill.startTime - now > 0) ? (skill.startTime - now) : 0)/(userService.queueMeterDays*86400000))*100}}%,
+                            #2980B9 {{((skill.endTime-now)/(userService.queueMeterDays*86400000))*100}}%,
+                            #000000 {{((skill.endTime-now)/(userService.queueMeterDays*86400000))*100}}%,
+                            #000000 100%
+                        );">
+                </div>
             </ion-item>
         </ion-list>
     <ion-content>

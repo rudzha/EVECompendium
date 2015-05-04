@@ -11,6 +11,7 @@ angular.module('compendium.services', [])
     this.selectedCharacter = '';
     this.syncRate = 3600;
     this.synced = 0;
+    this.queueMeterDays = 7;
     this.init = function() {
         var dfd = $q.defer();
         localDB.get('UserSettings').then(function(resp) {
@@ -24,6 +25,7 @@ angular.module('compendium.services', [])
                     _id: 'UserSettings',
                     selectedCharacter: '',
                     syncRate: 3600,
+                    queueMeterDays: 7,
                     synced: 0
                 };
                 localDB.put(apiKeys).then(function(){
@@ -39,6 +41,7 @@ angular.module('compendium.services', [])
             resp.syncRate = self.syncRate;
             resp.selectedCharacter = self.selectedCharacter;
             resp.synced = self.synced;
+            resp.queueMeterDays = self.queueMeterDays;
             return localDB.put(resp);
         }).then(function(resp){
             dfd.resolve(resp);

@@ -9,6 +9,14 @@
                     <p>{{userService.syncRate * 1000 | date : 'HH:mm' : 'UTC'}}</p>
                 </div>
             </div>
+            <div class="item">
+                <h2>Skill queue meter range</h2>
+                <div class="item range range-positive">
+                    <i class="icon ion-android-time"></i>
+                    <input type="range" name="rate" min="1" max="365" ng-change="userService.save()" ng-model="userService.queueMeterDays">
+                    <p>{{userService.queueMeterDays}} days</p>
+                </div>
+            </div>
         </div>
     </ion-content>
 </ion-view>
