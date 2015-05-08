@@ -1,0 +1,35 @@
+<ion-view view-title="Plan..">
+    <ion-content padding="true" scroll="true" class="has-header">
+        <form name="planform">
+            <button ng-disabled="planform.$invalid" class="button button-clear" type="button" ng-click="createNewPlan(plan)">SAVE PLAN</button>
+            <ion-list>
+                <ion-item class="item-input item-floating-label">
+                    <span class="input-label">Name</span>
+                    <input type="text" placeholder="Name" ng-model="plan.name" required></input>
+                </ion-item>
+            </ion-list>
+            <button class="button button-clear" type="button" ng-click="showReorder = (showReorder ? false : true)">REORDER SKILLS</button>
+            <button class="button button-clear" type="button" ng-click="showDelete = (showDelete ? false : true)">REMOVE SKILLS</button>
+            <ion-list show-reorder="showReorder" show-delete="showDelete">
+                <ion-item class="item-text-wrap" ng-hide="plan.skillSeed.length">
+                    <h2>Skill list seed is empty</h2>
+                    <p>The actual skill list will be generated from this seed. Add some skills to the seed.</p>
+                </ion-item>
+                <ion-item ng-repeat="skill in plan.skillSeed">
+                    <h2>{{skill.name}}</h2>
+                    <label for="levelSelect">Level: </label>
+                    <select name="levelSelect" ng-model="skill.level" ng-options="level as level for level in levels">{{level}}</select>
+                    <ion-reorder-button class="ion-drag" on-reorder="reorderSkill(skill, $fromIndex, $toIndex)"></ion-reorder-button>
+                    <ion-delete-button class="ion-android-delete" ng-click="removeSkill($index)"></ion-delete-button>
+                </ion-item>
+            </ion-list>
+        </form>
+    </ion-content>
+    <div class="float-button">
+        <span class="height-fix">
+            <a ng-click="addSkill()" class="content">
+                <i class="ion-plus-round"></i>
+            </a>
+        </span>
+    </div>
+</ion-view>

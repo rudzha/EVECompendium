@@ -6,36 +6,37 @@
 // the 2nd parameter is an array of 'requires'
 // 'compendium.controllers' is found in controllers.js
 angular.module('compendium', [
-        'ionic',
-        'compendium.controllers',
-        'compendium.services',
-        'compendium.apiholder',
-        'compendium.account',
-        'compendium.characters',
-        'compendium.skillqueue',
-        'compendium.skilltree',
-        'compendium.filters',
-        'ngLodash',
-        'cb.x2js',
-        'pouchdb'
-    ])
-    .constant('CONFIG', {
-        APIPath: 'https://api.eveonline.com/'
-    })
-    .run(function($ionicPlatform) {
-        $ionicPlatform.ready(function() {
-            // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-            // for form inputs)
-            if (window.cordova && window.cordova.plugins.Keyboard) {
-                cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-            }
-            if (window.StatusBar) {
-                // org.apache.cordova.statusbar required
-                StatusBar.styleDefault();
-            }
-        });
-    })
-
+    'ionic',
+    'compendium.controllers',
+    'compendium.services',
+    'compendium.apiholder',
+    'compendium.account',
+    'compendium.characters',
+    'compendium.skillqueue',
+    'compendium.skilltree',
+    'compendium.plan',
+    'compendium.planholder',
+    'compendium.filters',
+    'ngLodash',
+    'cb.x2js',
+    'pouchdb'
+])
+.constant('CONFIG', {
+    APIPath: 'https://api.eveonline.com/'
+})
+.run(function($ionicPlatform) {
+    $ionicPlatform.ready(function() {
+    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+    // for form inputs)
+        if (window.cordova && window.cordova.plugins.Keyboard) {
+            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        }
+        if (window.StatusBar) {
+            // org.apache.cordova.statusbar required
+            StatusBar.styleDefault();
+        }
+    });
+})
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     $stateProvider
         .state('app', {
@@ -129,8 +130,8 @@ angular.module('compendium', [
                 }
             }
         })
-        .state('app.character', {
-            url: '/characters/:characterID',
+        .state('app.characters.selected', {
+            url: '/:characterID',
             views: {
                 'menuContent': {
                     templateUrl: 'templates/charactersheet.html',
@@ -146,7 +147,7 @@ angular.module('compendium', [
         .state('app.skills', {
             url: '/skills',
             abstract: true,
-            cache: false,
+            cache: true,
             views: {
                 'menuContent': {
                     templateUrl: 'templates/skills/skills.html',
@@ -156,6 +157,7 @@ angular.module('compendium', [
         })
         .state('app.skills.queue', {
             url: '/queue',
+            cache: false,
             views: {
                 'queue': {
                     templateUrl: 'templates/skills/queue.html',
@@ -178,6 +180,58 @@ angular.module('compendium', [
                 'all': {
                     templateUrl: 'templates/skills/all.html',
                     controller: 'SkillsAllCtrl'
+                }
+            }
+        })
+        .state('app.plans', {
+            url: '/plans',
+            abstract: true,
+            views: {
+                'menuContent': {
+                    templateUrl: 'templates/planner/plans.html',
+                }
+            },
+            resolve: {
+                skillPlans: function(SkillPlans) {
+                    return SkillPlans.init().then(function(){
+                        return SkillPlans;
+                    });
+                }
+            }
+        })
+        .state('app.plans.new', {
+            url: '/new',
+            views: {
+                'plansview': {
+                    templateUrl: 'templates/planner/planeditor.html',
+                    controller: 'PlansNewCtrl'
+                }
+            }
+        })
+        .state('app.plans.list', {
+            url: '',
+            views: {
+                'plansview': {
+                    templateUrl: 'templates/planner/planlist.html',
+                    controller: 'PlansCtrl'
+                }
+            }
+        })
+        .state('app.plans.selected', {
+            url: '/:id',
+            views: {
+                'plansview': {
+                    templateUrl: 'templates/planner/plan.html',
+                    controller: 'PlanCtrl'
+                }
+            }
+        })
+        .state('app.plans.edit', {
+            url: '/:id/edit',
+            views: {
+                'plansview': {
+                    templateUrl: 'templates/planner/planeditor.html',
+                    controller: 'PlansEditCtrl'
                 }
             }
         })

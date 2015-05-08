@@ -1,0 +1,20 @@
+<ion-view view-title="{{plan.name}}">
+    <ion-content padding="true" class="has-header">
+        <button ui-sref="app.plans.edit({id: plan._id})" class="button-clear">EDIT</button>
+        <button class="button-clear" ng-click="delete()">DELETE</button>
+        <ion-list>
+            <ion-item>
+                <label>Plan: </label>
+                <h2>{{plan.name}}</h2>
+            </ion-item>
+            <ion-item ng-repeat="skill in plan.generatedSkillPlan">
+                {{skill.name}}
+            </ion-item>
+        </ion-list>
+        <ion-list>
+            <ion-item ng-repeat="skill in plan.skillSeed">
+                {{skill.name}}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

@@ -26,20 +26,14 @@
             <p>{{userService.selectedCharacter}}</p>
             <br/>
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/characters">
-            <p>Characters</p>
-        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/characters">Characters</ion-item>
         <ion-item class="item-divider">Details</ion-item>
-        <ion-item nav-clear menu-close href="#/app/characters/{{userService.selectedCharacter}}">
-            <p>Sheet</p>
-        </ion-item>
-        <ion-item nav-clear menu-close href="#/app/skills/current">
-            <p>Skills</p>
-        </ion-item>
+        <ion-item nav-clear menu-close ui-sref="app.characters.selected({characterID: userService.selectedCharacter})">Sheet</ion-item>
+        <ion-item nav-clear menu-close href="#/app/skills/current">Skills</ion-item>
+        <ion-item class="item-divider">Planner</ion-item>
+        <ion-item nav-clear menu-close ui-sref="app.plans.list">Skill plans</ion-item>
         <ion-item class="item-divider">Misc</ion-item>
-        <ion-item nav-clear menu-close href="#/app/settings">
-            <p>Settings</p>
-        </ion-item>
+        <ion-item nav-clear menu-close href="#/app/settings">Settings</ion-item>
       </ion-list>
     </ion-content>
   </ion-side-menu>

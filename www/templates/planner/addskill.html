@@ -1,0 +1,21 @@
+<ion-modal-view>
+    <ion-header-bar>
+        <h1 class="title">Add skill</h1>
+        <div class="buttons">
+            <button class="button button-clear" ng-click="closeAddSkill()">Close</button>
+        </div>
+    </ion-header-bar>
+    <ion-content padding="true" class="has-header">
+        <div>
+            <label class="item item-input">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input ng-model="allSkillSearch.skillName" type="search" placeholder="Search">
+            </label>
+        </div>
+        <ion-list>
+            <ion-item item-height="50" item-width="100%" collection-repeat="skill in allSkills | filter: allSkillSearch" ng-click="AddSkillToSeed(skill.skillID)">
+                {{skill.skillName}}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-modal-view>
