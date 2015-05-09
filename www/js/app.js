@@ -19,7 +19,7 @@ angular.module('compendium', [
     'characters',
     'skillqueue',
     'skilltree',
-    'plan',
+    'compendium.plan',
     'filters'
 ])
 .constant('CONFIG', {

@@ -1,6 +1,5 @@
 (function(){
     'use strict';
-    angular.module('plan')
     /**
      * @ngdoc service
      * @name plan.service:SkillPlans
@@ -9,7 +8,7 @@
      * Interface for Skill Plans, holds and let's you manage multiple
      * SkillPlans
      */
-    .service('SkillPlans', function($q, SkillPlan, pouchDB, lodash) {
+    function SkillPlans ($q, SkillPlan, pouchDB, lodash) {
         var localDB = new pouchDB('compendium');
         this.skillPlans = {};
         /**
@@ -84,5 +83,7 @@
                 delete self.skillPlans[id];
             });
         };
-    });
+    }
+    angular.module('compendium.plan')
+        .service('SkillPlans', ['$q', 'SkillPlan', 'pouchDB', 'lodash', SkillPlans]);
 })();

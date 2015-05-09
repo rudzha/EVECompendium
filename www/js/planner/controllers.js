@@ -1,6 +1,5 @@
 (function(){
     'use strict';
-    angular.module('plan')
     /**
      * @ngdoc controller
      * @name plan.controllers:PlansCtrl
@@ -9,12 +8,13 @@
      * Controller for the main Skill Plans view,
      * adds SkillPlans holder to the scope;
      */
-    .controller('PlansCtrl', function($scope, lodash, skillPlans) {
-        $scope.skillPlans = skillPlans;
-        $scope.checkIfEmpty = function(object) {
-            return lodash.size(object);
-        };
-    })
+    function PlansCtrl ($scope, lodash, skillPlans) {
+            $scope.skillPlans = skillPlans;
+            $scope.checkIfEmpty = function(object) {
+                return lodash.size(object);
+            };
+    }
+
     /**
      * @ngdoc controller
      * @name plan.controllers:PlansEditorCtrl
@@ -25,7 +25,7 @@
      * Opens a modal for adding new skill.
      * Adds array of numbers to scope to get a number from the select/option dialog
      */
-    .controller('PlansEditorCtrl', function($scope, $state, $stateParams, $ionicModal, SkillPlanGenerator, lodash, skillPlans) {
+    function PlansEditorCtrl ($scope, $state, $stateParams, $ionicModal, SkillPlanGenerator, lodash, skillPlans) {
         $scope.showReorder = false;
         $scope.showDelete = false;
         $scope.levels = [1,2,3,4,5];
@@ -85,7 +85,7 @@
             }
 
         };
-    })
+    }
     /**
      * @ngdoc controller
      * @name plan.controllers:PlanCtrl
@@ -94,7 +94,7 @@
      * Controller for the individual plan view.
      * Adds the selected plan to the scope.
      */
-    .controller('PlanCtrl', function($scope, $state, $stateParams, $ionicHistory, skillPlans){
+    function PlanCtrl ($scope, $state, $stateParams, $ionicHistory, skillPlans) {
         $scope.plan = skillPlans.read($stateParams.id);
         $scope.delete = function(){
             skillPlans.remove($stateParams.id).then(function(){
@@ -104,5 +104,10 @@
                 $state.go('app.plans.list');
             });
         };
-    });
+    }
+    angular
+        .module('compendium.plan')
+        .controller('PlansCtrl', ['$scope', 'lodash', 'skillPlans', PlansCtrl])
+        .controller('PlansEditorCtrl', ['$scope', '$state', '$stateParams', '$ionicModal', 'SkillPlanGenerator', 'lodash', 'skillPlans', PlansEditorCtrl])
+        .controller('PlanCtrl', ['$scope', '$state', '$stateParams', '$ionicHistory', 'skillPlans', PlanCtrl]);
 })();

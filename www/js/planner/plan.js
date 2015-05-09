@@ -1,6 +1,5 @@
 (function(){
     'use strict';
-    angular.module('plan')
     /**
      * @ngdoc service
      * @name plan.service:SkillPlan
@@ -9,7 +8,7 @@
      * Skill plan factory that returns a SkillPlan object.
      * Used to store and managa individual SkillPlans
      */
-    .factory('SkillPlan', function($q, lodash, pouchDB) {
+    function SkillPlan ($q, lodash, pouchDB) {
         var localDB = new pouchDB('compendium');
         /**
          * @ngdoc method
@@ -92,5 +91,7 @@
             return serialObj;
         };
         return SkillPlan;
-    });
+    }
+    angular.module('compendium.plan')
+        .factory('SkillPlan', ['$q', 'lodash', 'pouchDB', SkillPlan]);
 })();

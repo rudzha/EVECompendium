@@ -1,6 +1,5 @@
 (function () {
     'use strict';
-    angular.module('plan')
     /**
      * @ngdoc service
      * @name plan.service:SkillPlanGenerator
@@ -11,7 +10,7 @@
      * In the end it returns a list of skills and their dependendies,
      * ordered by depenendency.
      */
-    .service('SkillPlanGenerator', function($q, lodash, SkillTreeService) {
+    function SkillPlanGenerator ($q, lodash, SkillTreeService) {
         /**
          * @ngdoc method
          * @name generate
@@ -59,5 +58,7 @@
             console.log(skillList);
             return skillList;
         };
-    });
+    }
+    angular.module('compendium.plan')
+        .service('SkillPlanGenerator', ['$q', 'lodash', 'SkillTreeService', SkillPlanGenerator]);
 })();
