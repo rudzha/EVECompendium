@@ -2,11 +2,11 @@
   "name": "EVECompendium",
   "private": "true",
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.0.0-rc.5",
+    "ionic": "driftyco/ionic-bower#master",
     "pouchdb": "~3.4.0",
     "angular-x2js": "~0.2.0",
-    "angular-pouchdb": "~2.0.1",
-    "ng-lodash": "~0.2.1",
-    "lodash": "~3.6.0"
+    "angular-pouchdb": "~2.0.6",
+    "ng-lodash": "~0.2.3",
+    "lodash": "~3.8.0"
   }
 }

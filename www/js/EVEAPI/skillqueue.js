@@ -1,5 +1,5 @@
 'use strict';
-angular.module('compendium.skillqueue', [])
+angular.module('skillqueue', [])
 .factory('SkillQueue', function(CONFIG, $http, $q, XML2JSON, lodash, pouchDB) {
     var localDB = new pouchDB('compendium');
     var SkillQueue = function(characterID) {

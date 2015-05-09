@@ -1,25 +1,26 @@
 'use strict';
-// Ionic compendium App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'compendium' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'compendium.controllers' is found in controllers.js
+/**
+ * @ngdoc object
+ * @name compendium
+ * @description
+ *
+ *
+ */
 angular.module('compendium', [
     'ionic',
-    'compendium.controllers',
-    'compendium.services',
-    'compendium.apiholder',
-    'compendium.account',
-    'compendium.characters',
-    'compendium.skillqueue',
-    'compendium.skilltree',
-    'compendium.plan',
-    'compendium.planholder',
-    'compendium.filters',
     'ngLodash',
     'cb.x2js',
-    'pouchdb'
+    'pouchdb',
+
+    'controllers',
+    'services',
+    'apiholder',
+    'account',
+    'characters',
+    'skillqueue',
+    'skilltree',
+    'plan',
+    'filters'
 ])
 .constant('CONFIG', {
     APIPath: 'https://api.eveonline.com/'
@@ -102,7 +103,7 @@ angular.module('compendium', [
             url: '/apikeys',
             views: {
                 'menuContent': {
-                    templateUrl: 'templates/apikeys.html',
+                    templateUrl: 'templates/apikeys/apikeys.html',
                     controller: 'APIKeysCtrl'
                 }
             }
@@ -111,7 +112,7 @@ angular.module('compendium', [
             url: '/apikeys/:keyID',
             views: {
                 'menuContent': {
-                    templateUrl: 'templates/apikey.html',
+                    templateUrl: 'templates/apikeys/apikey.html',
                     controller: 'APIKeyCtrl'
                 }
             },
@@ -130,17 +131,12 @@ angular.module('compendium', [
                 }
             }
         })
-        .state('app.characters.selected', {
-            url: '/:characterID',
+        .state('app.character', {
+            url: '/characters/:characterID',
             views: {
                 'menuContent': {
                     templateUrl: 'templates/charactersheet.html',
                     controller: 'CharacterSheetCtrl'
-                }
-            },
-            resolve: {
-                characterID: function($stateParams) {
-                    return $stateParams.characterID;
                 }
             }
         })
@@ -204,7 +200,7 @@ angular.module('compendium', [
             views: {
                 'plansview': {
                     templateUrl: 'templates/planner/planeditor.html',
-                    controller: 'PlansNewCtrl'
+                    controller: 'PlansEditorCtrl'
                 }
             }
         })
@@ -231,7 +227,7 @@ angular.module('compendium', [
             views: {
                 'plansview': {
                     templateUrl: 'templates/planner/planeditor.html',
-                    controller: 'PlansEditCtrl'
+                    controller: 'PlansEditorCtrl'
                 }
             }
         })

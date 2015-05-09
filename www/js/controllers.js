@@ -1,5 +1,5 @@
 'use strict';
-angular.module('compendium.controllers', [])
+angular.module('controllers', [])
 .controller('AppCtrl', function($scope, $state, user, eve, skills) {
     $scope.userService = user;
     $scope.eveApi = eve;
@@ -23,8 +23,8 @@ angular.module('compendium.controllers', [])
 })
 .controller('menuCtrl', function() {})
 .controller('CharactersCtrl', function() {})
-.controller('CharacterSheetCtrl', function($scope, characterID) {
-     $scope.characterID = characterID;
+.controller('CharacterSheetCtrl', function($scope, $stateParams) {
+     $scope.characterID = $stateParams.characterID;
 })
 .controller('CharacterSkillsCtrl', function($scope, $sce, $ionicModal, lodash) {
     $scope.now = lodash.now();
@@ -64,79 +64,6 @@ angular.module('compendium.controllers', [])
         return result;
     },[]);
 })
-.controller('PlansCtrl', function($scope, lodash, skillPlans) {
-    $scope.skillPlans = skillPlans;
-    $scope.checkIfEmpty = function(object) {
-        console.log('test');
-        return lodash.size(object);
-    };
-})
-.controller('PlansEditCtrl', function($scope, $state, $stateParams, skillPlans) {
-    $scope.levels = [1,2,3,4,5];
-    $scope.plan = skillPlans.read($stateParams.id);
-    $scope.reorderSkill = function (skill, fromIndex, toIndex) {
-        $scope.plan.skillSeed.splice(fromIndex, 1);
-        $scope.plan.skillSeed.splice(toIndex, 0, skill);
-    };
-    $scope.removeSkill = function(index) {
-        $scope.plan.skillSeed.splice(index, 1);
-    };
-})
-.controller('PlansNewCtrl', function($scope, $state, $ionicModal, lodash, skillPlans) {
-    $scope.showReorder = false;
-    $scope.levels = [1,2,3,4,5];
-    $scope.plan = {
-        name: '',
-        skillSeed: []
-    };
-    $scope.allSkills = lodash.transform($scope.skillTree.skillTree, function(result, item) {
-        result.push(item);
-        return result;
-    },[]);
-    $ionicModal.fromTemplateUrl('templates/planner/addskill.html', {
-        scope: $scope
-    }).then(function(modal) {
-        $scope.modal = modal;
-    });
-    $scope.addSkill = function() {
-      $scope.modal.show();
-    };
-    $scope.AddSkillToSeed = function(id) {
-        if(!lodash.findWhere($scope.plan.skillSeed, {skillID: id})){
-            var temp = $scope.skillTree.get(id);
-            temp = {name: temp.skillName, skillID: temp.skillID, level: 1, requiredSkills: temp.requiredSkills, requiredAttributes: temp.requiredAttributes};
-            $scope.plan.skillSeed.push(temp);
-        }
-        $scope.modal.hide();
-    };
-    $scope.reorderSkill = function (skill, fromIndex, toIndex) {
-        $scope.plan.skillSeed.splice(fromIndex, 1);
-        $scope.plan.skillSeed.splice(toIndex, 0, skill);
-    };
-    $scope.removeSkill = function(index) {
-        $scope.plan.skillSeed.splice(index, 1);
-    };
-    $scope.closeAddSkill = function() {
-        $scope.modal.hide();
-    };
-    $scope.createNewPlan = function(plan) {
-        console.log(plan);
-        skillPlans.create(plan).then(function(){
-            $state.go('app.plans.list');
-        });
-    };
-})
-.controller('PlanCtrl', function($scope, $state, $stateParams, $ionicHistory, skillPlans){
-    $scope.plan = skillPlans.skillPlans[$stateParams.id];
-    $scope.delete = function(){
-        skillPlans.remove($stateParams.id).then(function(){
-            $ionicHistory.nextViewOptions({
-                disableBack: true
-            });
-            $state.go('app.plans.list');
-        });
-    };
-})
 .controller('APIKeysCtrl', function($scope, $ionicModal) {
     //TODO: remove, here for testing purposes
     $scope.newkey = {
@@ -144,7 +71,7 @@ angular.module('compendium.controllers', [])
         id: '4020716',
         code: 'QqV3kTFvWKLpnj51XyJKeuCFFSl4vxlsmu16u287pV8TX0M4Mf8JZHea3uudseXB'
     };
-    $ionicModal.fromTemplateUrl('templates/addapikey.html', {
+    $ionicModal.fromTemplateUrl('templates/apikeys/addapikey.html', {
         scope: $scope
     }).then(function(modal) {
         $scope.modal = modal;

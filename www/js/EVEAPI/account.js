@@ -1,5 +1,5 @@
 'use strict';
-angular.module('compendium.account', [])
+angular.module('account', [])
 .factory('EVEAccount', function(CONFIG, $http, $q, XML2JSON, lodash, pouchDB) {
     var localDB = new pouchDB('compendium');
     var Account = function(name, key, code) {

@@ -1,5 +1,5 @@
 'use strict';
-angular.module('compendium.filters', [])
+angular.module('filters', [])
 .filter('GroupBy', function(lodash){
     return function(input, field) {
         //console.log(input, field);

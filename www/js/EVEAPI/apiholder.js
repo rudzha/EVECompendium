@@ -1,5 +1,5 @@
 'use strict';
-angular.module('compendium.apiholder', [])
+angular.module('apiholder', [])
 .service('EVEAPIHolder', function($q, pouchDB, lodash, EVEAccount, EVECharacter, SkillQueue, UserService){
     var localDB = pouchDB('compendium');
     this.accounts = {};

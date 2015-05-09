@@ -8,9 +8,10 @@
                 <h2>{{plan.name}}</h2>
             </ion-item>
             <ion-item ng-repeat="skill in plan.generatedSkillPlan">
-                {{skill.name}}
+                {{skill.name}} {{skill.level}}
             </ion-item>
         </ion-list>
+        <h2>Generated from:</h2>
         <ion-list>
             <ion-item ng-repeat="skill in plan.skillSeed">
                 {{skill.name}}

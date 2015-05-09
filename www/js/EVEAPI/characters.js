@@ -1,5 +1,5 @@
 'use strict';
-angular.module('compendium.characters', [])
+angular.module('characters', [])
 .factory('EVECharacter', function(CONFIG, $http, $q, XML2JSON, lodash, pouchDB){
     var localDB = new pouchDB('compendium');
     var Character = function(characterID) {

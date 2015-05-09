@@ -1,5 +1,5 @@
 'use strict';
-angular.module('compendium.skilltree', [])
+angular.module('skilltree', [])
 .service('SkillTreeService', function($http, $q, CONFIG, XML2JSON, pouchDB, lodash) {
     var localDB = pouchDB('compendium');
     var self = this;
