@@ -1,7 +1,7 @@
 <ion-view view-title="Characters">
     <ion-content padding="true" class="has-header">
         <ion-list>
-            <ion-radio ng-repeat="character in eveApi.characters" ng-model="userService.selectedCharacter" ng-value="character.characterID" ng-change="userService.save()" class="item-thumbnail-left">
+            <ion-radio ng-model="$parent.selectedCharacter" ng-repeat="character in characters"  ng-value="character.characterID" ng-change="select($parent.selectedCharacter)" class="item-thumbnail-left">
                 <img ng-src="http://image.eveonline.com/character/{{character.characterID}}_512.jpg">
                 <h2>{{character.name}}</h2>
                 <p>{{character.corporationName}}</p>

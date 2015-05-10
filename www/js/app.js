@@ -4,7 +4,7 @@
  * @name compendium
  * @description
  *
- *
+ * EVE Compendium application.
  */
 angular.module('compendium', [
     'ionic',
@@ -19,7 +19,9 @@ angular.module('compendium', [
     'characters',
     'skillqueue',
     'skilltree',
+    'compendium.background',
     'compendium.plan',
+    'compendium.settings',
     'filters'
 ])
 .constant('CONFIG', {
@@ -31,11 +33,13 @@ angular.module('compendium', [
     // for form inputs)
         if (window.cordova && window.cordova.plugins.Keyboard) {
             cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+            cordova.plugins.backgroundMode.enable();
         }
         if (window.StatusBar) {
             // org.apache.cordova.statusbar required
             StatusBar.styleDefault();
         }
+
     });
 })
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
@@ -46,15 +50,10 @@ angular.module('compendium', [
             templateUrl: 'templates/menu.html',
             controller: 'AppCtrl',
             resolve: {
-                user: function($q, UserService, ClockService) {
-                    var dfd = $q.defer();
-                    UserService.init().then(function() {
-                        ClockService.start(UserService.syncRate);
-                        dfd.resolve(UserService);
-                    });
-                    return dfd.promise;
+                settings: function(Settings) {
+                    return Settings.init();
                 },
-                eve: function($q, EVEAPIHolder, ClockService) {
+                eve: function($q, EVEAPIHolder, Timer) {
                     var dfd = $q.defer();
                     EVEAPIHolder.init().then(function(response) {
                         console.log('INIT', response, EVEAPIHolder);
@@ -67,7 +66,7 @@ angular.module('compendium', [
                                 console.log(error);
                             }).then(function(){
                                 console.log('INIT', 'Characters refreshed');
-                                ClockService.addFunction(EVEAPIHolder.refresh);
+                                Timer.registerFunction(EVEAPIHolder.refresh);
                                 dfd.resolve(EVEAPIHolder);
                             });
                         } else {
@@ -127,7 +126,8 @@ angular.module('compendium', [
             views: {
                 'menuContent': {
                     templateUrl: 'templates/characters.html',
-                    controller: 'CharactersCtrl'
+                    controller: 'CharactersCtrl',
+                    controllerAs: 'vm'
                 }
             }
         })
@@ -163,6 +163,7 @@ angular.module('compendium', [
         })
         .state('app.skills.current', {
             url: '/current',
+            cache: false,
             views: {
                 'current': {
                     templateUrl: 'templates/skills/current.html',
@@ -235,7 +236,7 @@ angular.module('compendium', [
             url: '/settings',
             views: {
                 'menuContent': {
-                    templateUrl: 'templates/settings.html',
+                    templateUrl: 'templates/settings/settings.html',
                     controller: 'SettingsCtrl'
                 }
             }

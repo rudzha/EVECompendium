@@ -13,8 +13,7 @@
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="BackupWebStorage" value="none" />
-    <plugin name="StatusBar">
-        <param name="ios-package" onload="true" value="CDVStatusBar" />
-    </plugin>
     <plugin name="cordova-plugin-whitelist" spec="^1.0.1-dev" />
+    <plugin name="de.appplant.cordova.plugin.background-mode" spec="https://github.com/katzer/cordova-plugin-background-mode.git" />
+    <plugin name="com.ionic.keyboard" spec="^1.0.4" />
 </widget>

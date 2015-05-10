@@ -20,6 +20,7 @@
   "cordovaPlugins": [
     "org.apache.cordova.device",
     "org.apache.cordova.console",
+    "de.appplant.cordova.plugin.background-mode",
     "com.ionic.keyboard"
   ],
   "cordovaPlatforms": [

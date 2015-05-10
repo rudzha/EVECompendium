@@ -1,7 +1,7 @@
 'use strict';
 angular.module('controllers', [])
-.controller('AppCtrl', function($scope, $state, user, eve, skills) {
-    $scope.userService = user;
+.controller('AppCtrl', function($scope, $state, Timer, settings, eve, skills) {
+    Timer.start(settings.syncRate);
     $scope.eveApi = eve;
     $scope.skillTree = skills;
     console.log(skills);
@@ -21,8 +21,26 @@ angular.module('controllers', [])
         });
     };
 })
-.controller('menuCtrl', function() {})
-.controller('CharactersCtrl', function() {})
+.controller('menuCtrl', function($scope, Settings) {
+    $scope.settings = Settings;
+})
+.controller('CharactersCtrl', function($scope, EVEAPIHolder, Settings) {
+    $scope.characters = EVEAPIHolder.characters;
+    console.log('Broken', Settings.selectedCharacter);
+    $scope.selectedCharacter = Settings.selectedCharacter;
+    $scope.select = function (char) {
+        console.log(char);
+        Settings.selectedCharacter = char;
+        Settings.save()
+        .then(function(response){
+            console.log(response);
+        })
+        .catch(function(error){
+            console.log(error);
+        });
+    };
+})
+
 .controller('CharacterSheetCtrl', function($scope, $stateParams) {
      $scope.characterID = $stateParams.characterID;
 })
@@ -46,14 +64,15 @@ angular.module('controllers', [])
         $scope.modal.hide();
     };
 })
-.controller('SkillsQueueCtrl', function($scope, lodash) {
-    $scope.queue = lodash.map($scope.eveApi.characters[$scope.userService.selectedCharacter].skillQueue.queue, function(item){
+.controller('SkillsQueueCtrl', function($scope, lodash, Settings) {
+    $scope.settings = Settings;
+    $scope.queue = lodash.map($scope.eveApi.characters[Settings.selectedCharacter].skillQueue.queue, function(item){
         var temp = $scope.skillTree.get(item.skillID);
         return {skillID: item.skillID, name: temp.skillName, level: item.level, startTime: item.startTime, endTime: item.endTime};
     });
 })
-.controller('SkillsCurrentCtrl', function($scope, lodash) {
-    $scope.currentSkills = lodash.map($scope.eveApi.characters[$scope.userService.selectedCharacter].skills, function(item) {
+.controller('SkillsCurrentCtrl', function($scope, lodash, Settings) {
+    $scope.currentSkills = lodash.map($scope.eveApi.characters[Settings.selectedCharacter].skills, function(item) {
         var temp = $scope.skillTree.get(item.skillID);
         return ({skillID: item.skillID, skill: temp.skillName, group: temp.groupName, level: item.level});
     });
@@ -110,5 +129,4 @@ angular.module('controllers', [])
             console.log('APIKeyCtrl:delete', error);
         });
     };
-})
-.controller('SettingsCtrl', function() {});
+});

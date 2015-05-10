@@ -21,14 +21,14 @@
     <ion-content ng-controller="menuCtrl">
       <ion-list>
         <ion-item class='item item-divider item-avatar'>
-            <img ng-src="http://image.eveonline.com/character/{{userService.selectedCharacter}}_512.jpg"></img>
-            <h2>{{eveApi.characters[userService.selectedCharacter].name}}</h2>
-            <p>{{userService.selectedCharacter}}</p>
+            <img ng-src="http://image.eveonline.com/character/{{settings.selectedCharacter}}_512.jpg"></img>
+            <h2>{{eveApi.characters[settings.selectedCharacter].name}}</h2>
+            <p>{{settings.selectedCharacter}}</p>
             <br/>
         </ion-item>
         <ion-item nav-clear menu-close href="#/app/characters">Characters</ion-item>
         <ion-item class="item-divider">Details</ion-item>
-        <ion-item nav-clear menu-close ui-sref="app.character({characterID: userService.selectedCharacter})">Sheet</ion-item>
+        <ion-item nav-clear menu-close ui-sref="app.character({characterID: settings.selectedCharacter})">Sheet</ion-item>
         <ion-item nav-clear menu-close href="#/app/skills/current">Skills</ion-item>
         <ion-item class="item-divider">Planner</ion-item>
         <ion-item nav-clear menu-close ui-sref="app.plans.list">Skill plans</ion-item>

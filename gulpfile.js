@@ -15,12 +15,6 @@ var paths = {
 
 gulp.task('default', ['sass']);
 
-gulp.task('dgeni', function(done) {
-  return dgeni('docs/docs.config.js')
-    .generateDocs()
-    .then(done);
-});
-
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
     .pipe(sass())
@@ -35,7 +29,6 @@ gulp.task('sass', function(done) {
 
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
-  gulp.watch(paths.js, ['ngdocs']);
 });
 
 gulp.task('install', ['git-check'], function() {

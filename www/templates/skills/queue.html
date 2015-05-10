@@ -23,10 +23,10 @@
                 <div class="SkillMeter" style="background: linear-gradient(
                             90deg,
                             #000000 0%,
-                            #000000 {{(((skill.startTime - now > 0) ? (skill.startTime - now) : 0)/(userService.queueMeterDays*86400000))*100}}%,
-                            #2980B9 {{(((skill.startTime - now > 0) ? (skill.startTime - now) : 0)/(userService.queueMeterDays*86400000))*100}}%,
-                            #2980B9 {{((skill.endTime-now)/(userService.queueMeterDays*86400000))*100}}%,
-                            #000000 {{((skill.endTime-now)/(userService.queueMeterDays*86400000))*100}}%,
+                            #000000 {{(((skill.startTime - now > 0) ? (skill.startTime - now) : 0)/(settings.queueMeterDays*86400000))*100}}%,
+                            #2980B9 {{(((skill.startTime - now > 0) ? (skill.startTime - now) : 0)/(settings.queueMeterDays*86400000))*100}}%,
+                            #2980B9 {{((skill.endTime-now)/(settings.queueMeterDays*86400000))*100}}%,
+                            #000000 {{((skill.endTime-now)/(settings.queueMeterDays*86400000))*100}}%,
                             #000000 100%
                         );">
                 </div>

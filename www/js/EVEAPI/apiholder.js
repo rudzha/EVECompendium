@@ -1,6 +1,6 @@
 'use strict';
 angular.module('apiholder', [])
-.service('EVEAPIHolder', function($q, pouchDB, lodash, EVEAccount, EVECharacter, SkillQueue, UserService){
+.service('EVEAPIHolder', function($q, pouchDB, lodash, EVEAccount, EVECharacter, SkillQueue, Settings){
     var localDB = pouchDB('compendium');
     this.accounts = {};
     this.characters = {};
@@ -108,41 +108,27 @@ angular.module('apiholder', [])
     //TODO: Figure where to store synced status
     this.isOutOfDate = function() {
         var self = this;
-        return ((lodash.now() - UserService.synced) >= UserService.syncRate*1000);
+        return ((lodash.now() - Settings.synced) >= Settings.syncRate*60000);
     };
     this.refresh = function() {
         var self = this;
         var promises = [];
-        lodash.each(self.accounts, function(account){
-            console.log('does it break here?', account.keyID);
+        lodash.each(self.accounts, function(account) {
             account.refresh().then(function() {
-                UserService.synced = lodash.now();
-                promises.push(UserService.save());
-                promises.push(account.save().then(function(response){
-                    console.log('EVEAPI:refresh'. response);
-                    return response;
-                }).catch(function(error){
-                    console.log('EVEAPI:refresh', error);
-                    return error;
-                }));
+                Settings.synced = lodash.now();
+                promises.push(Settings.save());
+                promises.push(account.save());
                 lodash.each(account.characters, function(character) {
-                    self.characters[character].refresh(account.keyID, account.verificationCode).then(function(response){
-                        promises.push(self.characters[character].save().then(function(response) {
-                            console.log('EVEAPI:refresh', response);
-                            dfd.resolve(response);
-                        }).catch(function(error){
-                            console.log('EVEAPI:refresh', error);
-                            dfd.reject(error);
-                        }));
+                    self.characters[character].refresh(account.keyID, account.verificationCode)
+                    .then(function(){
+                        promises.push(self.characters[character].save());
                     });
-                    self.characters[character].skillQueue.refresh(account.keyID, account.verificationCode).then(function(response){
-                        promises.push(self.characters[character].skillQueue.save().then(function(response) {
-                            console.log('EVEAPI:refresh', response);
-                            dfd.resolve(self.characters[character].skillQueue);
-                        }).catch(function(error){
-                            console.log('EVEAPI:refresh', error);
-                        }));
+                    var oldQueue = self.characters[character].skillQueue.serialize();
+                    self.characters[character].skillQueue.refresh(account.keyID, account.verificationCode)
+                    .then(function(){
+                        promises.push(self.characters[character].skillQueue.save());
                     });
+                    checkIfSkillsComplete(self.characters[character].skills, oldQueue, self.characters[character].skillQueue);
                 });
             });
         });
@@ -169,4 +155,34 @@ angular.module('apiholder', [])
         });
         return $q.all(promises);
     };
+    /**
+     * @ngdoc function
+     * @name checkIfSkillsComplete
+     * @description
+     *
+     * Compares character's current skills, skill queue before and after refresh
+     * to detect if skill training has finished.
+     * First it creates symetrical difference between old and new skill queues,
+     * showing the change after the refresh.
+     * Then it creates intersection between current skill collection and
+     * difference to see if any of the skills that changed have been moved
+     * to current skills. Those that have will be sent to notification service
+     * to notify the user of finished training.
+     *
+     * @param {array} Character's current skill collection
+     * @param {array} Character's skill queue before refreshing
+     * @param {array} Character's skill queue after refreshing
+     */
+    function checkIfSkillsComplete(current, old, future) {
+        console.log('Checking');
+        var difference = lodash.filter(old, function(skill) {
+            return !(lodash.findWhere(future, {skillID: skill.skillID, level: skill.level}));
+        });
+        var intersection = lodash.filter(current, function(skill){
+            return (lodash.findWhere(difference, {skillID: skill.skillID, level: skill.level}));
+        });
+        lodash.forEach(intersection, function(item){
+            console.log(item);
+        });
+    }
 });
