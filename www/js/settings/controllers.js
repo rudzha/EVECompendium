@@ -14,10 +14,14 @@
          * @ngdoc function
          * @name update
          * @description
-         * 
+         *
          * Function that is called from the Settings view, updates settings
          * every time they are changed.
          */
+        $scope.setQueueRange = function (number) {
+            $scope.settings.queueMeterDays = number;
+            $scope.settings.save();
+        };
         $scope.update = function(){
             $scope.settings.save();
         };
