@@ -18,6 +18,11 @@
             </div>
             <div class="item">
                 <h2>Skill queue meter range</h2>
+                <div class="item range range-positive">
+                    <i class="icon ion-android-time"></i>
+                    <input type="range" name="rate" min="1" max="365" ng-change="update()" ng-model="settings.queueMeterDays">
+                    <p>{{settings.queueMeterDays}} days</p>
+                </div>
                 <div class="row">
                     <button ng-click="setQueueRange(1)" class="button-clear col" ng-class="{'active':(settings.queueMeterDays == 1)}">1d</button>
                     <button ng-click="setQueueRange(7)" class="button-clear col" ng-class="{'active':(settings.queueMeterDays == 7)}">7d</button>
@@ -25,11 +30,6 @@
                     <button ng-click="setQueueRange(90)" class="button-clear col" ng-class="{'active':(settings.queueMeterDays == 90)}">3m</button>
                     <button ng-click="setQueueRange(180)" class="button-clear col" ng-class="{'active':(settings.queueMeterDays == 180)}">6m</button>
                     <button ng-click="setQueueRange(365)" class="button-clear col" ng-class="{'active':(settings.queueMeterDays == 365)}">1y</button>
-                </div>
-                <div class="item range range-positive">
-                    <i class="icon ion-android-time"></i>
-                    <input type="range" name="rate" min="1" max="365" ng-change="update()" ng-model="settings.queueMeterDays">
-                    <p>{{settings.queueMeterDays}} days</p>
                 </div>
             </div>
         </div>

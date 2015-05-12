@@ -49,7 +49,9 @@
                 return result;
             })
             .flatten()
-            .uniq()
+            .uniq(function(item) {
+                return [item.skillID, item.level].join();
+            })
             .map(function(skill) {
                 skill.name = SkillTreeService.get(skill.skillID).skillName;
                 return skill;
