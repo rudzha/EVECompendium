@@ -1,24 +1,30 @@
 <ion-view view-title="New Training Plan">
     <ion-content padding="true" scroll="true" class="has-header">
         <form name="trainingform">
-            <button ng-click="saveTraining()">SAVE TRAINING</button>
+            <button class="button-clear" ng-click="saveTraining()">SAVE TRAINING</button>
             <ion-list>
                 <ion-item>
-                    <h2>{{newtraining.name}}</h2>
+                    <h2>Name</h2>
+                    <p>{{newtraining.name}}</p>
                 </ion-item>
-                <ion-item>
-                    <label>Character</label>
+                <label class="item item-input item-select">
+                    <div class="input-label">
+                        Character
+                    </div>
                     <select ng-model="newtraining.characterID"
                             ng-options="character.characterID as character.name for (id, character) in characters"
                             ng-change="updateName()">
                     </select>
-                </ion-item>
-                <ion-item>
-                    <label>Skill Plan</label>
+                </label>
+                <label class="item item-input item-select">
+                    <div class="input-label">
+                        Skill Plan
+                    </div>
                     <select ng-model="newtraining.planID"
                             ng-options="plan._id as plan.name for (id, plan) in skillPlans"
-                            ng-change="updateName()"></select>
-                </ion-item>
+                            ng-change="updateName()">
+                    </select>
+                </label>
             </ion-list>
         </form>
     </ion-content>

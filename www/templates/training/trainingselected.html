@@ -4,7 +4,9 @@
         <ion-list>
             <ion-item class="item-text-wrap" ng-hide="checkIfEmpty(training.trainingPlan)">Either training is finished or no skills are present in skill plan</ion-item>
             <ion-item ng-repeat="skill in training.trainingPlan">
-                <h2>{{skill.name}} - {{skill.level}}</h2>
+                <h2>{{skill.name}}</h2>
+                <p>Level {{skill.level}}</p>
+                <p ng-show="skill.bookNeeded"><i class="ion-ios-book"></i> Skillbook needed</p>
             </ion-item>
         </ion-list>
     </ion-content>

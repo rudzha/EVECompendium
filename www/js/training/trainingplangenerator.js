@@ -17,27 +17,34 @@
          * list of skills character is missing.
          * First it expands character's skill list to contain every level of a
          * skill character has. Then it filters skillplan removing every skill
-         * that is already in the expanded character's skill list.
+         * that is already in the expanded character's skill list. Once list is
+         * filtered, it checks if a skillbook is required for each skill.
          * @param {array} List of character's current skills
          * @param {array} List of skills from the SKillPlan
          * @returns {array} List of skills character requires
          */
         this.generate = function(charSkills, planSkills) {
-            var generatedTrainingPlan = [];
             var expandedCharSkills = lodash.chain(charSkills)
             .map(function(skill) {
                 var result = [];
-                for(var index = 1; index <= skill.level; index++) {
+                for(var index = 0; index <= skill.level; index++) {
                     result.push({skillID: skill.skillID, level: index});
                 }
                 return result;
             })
             .flatten()
             .value();
-            var difference = lodash.filter(planSkills, function(skill) {
+
+            var generatedTrainingPlan = lodash.chain(planSkills)
+            .filter(function(skill) {
                 return !(lodash.findWhere(expandedCharSkills, {skillID: skill.skillID, level: skill.level}));
-            });
-            return difference;
+            })
+            .map(function(skill) {
+                skill.bookNeeded = !lodash.findWhere(expandedCharSkills, {skillID: skill.skillID, level: 0});
+                return skill;
+            })
+            .value();
+            return generatedTrainingPlan;
         };
     }
     angular.module('compendium.training')
