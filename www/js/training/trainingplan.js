@@ -2,50 +2,47 @@
     'use strict';
     /**
      * @ngdoc service
-     * @name plan.service:SkillPlan
+     * @name training.service:TrainingPlan
      * @description
      *
-     * Skill plan factory that returns a SkillPlan object.
-     * Used to store and managa individual SkillPlans
+     * Factory for creation of TrainingPlan objects.
      */
-    function SkillPlan ($q, lodash, pouchDB) {
+    function TrainingPlan($q, lodash, pouchDB) {
         var localDB = new pouchDB('compendium');
         /**
          * @ngdoc method
-         * @constructs plan.SkillPlan
+         * @constructs training.TrainingPlan
          * @description
          *
-         * Initializes SkillPlan object with it's properties
-         *
-         * @param {string} Randomly generated ID used to store the object
-         * @param {object} Object containing properties
+         * Initializes TrainingPlan object and it's properties
          */
-        var skillPlan = function(id, obj) {
-            this._id = 'Plan-'+ id;
+        var trainingPlan = function () {
+            this._id = '';
             this._rev = '';
-            this.name = obj.name;
-            this.skillSeed = obj.skillSeed || {};
-            this.generatedSkillPlan = obj.generatedSkillPlan || {};
+            this.name = '';
+            this.characterID = '';
+            this.planID = '';
+            this.trainingPlan = [];
         };
         /**
          * @ngdoc method
          * @name save
          * @description
          *
-         * Calls SkillPlan's serialize method and then saves the returned Object
+         * Calls TrainingPlan's serialize method and then saves the returned Object
          * to database.
          *
          * @returns {object} A promise object which contains database response
          */
-        skillPlan.prototype.save = function() {
+         trainingPlan.prototype.save = function() {
             var self = this;
             var dfd = $q.defer();
             localDB.put(self.serialize()).then(function(response){
-                console.log('SkillPlan:save', response);
+                console.log('TrainingPlan:save', response);
                 self._rev = response.rev;
                 dfd.resolve(response);
             }).catch(function(error){
-                console.log('SkillPlan:save',error);
+                console.log('TrainingPlan:save',error);
                 dfd.reject(error);
             });
             return dfd.promise;
@@ -59,7 +56,7 @@
          *
          * @returns {object} A promise object which contains database response
          */
-        skillPlan.prototype.delete = function() {
+         trainingPlan.prototype.delete = function() {
             var self = this;
             var dfd = $q.defer();
             localDB.get(self._id).then(function(response){
@@ -76,12 +73,12 @@
          * @name serialize
          * @description
          *
-         * Creates a copy of the SkillPlan object's properites.
+         * Creates a copy of the TrainingPlan object's properites.
          * For the object to be saved it needs to be stripped of it's methods.
          *
-         * @returns {object} Naked/stripped SkillPlan object
+         * @returns {object} Naked/stripped TrainingPlan object
          */
-        skillPlan.prototype.serialize = function() {
+         trainingPlan.prototype.serialize = function() {
             var serialObj = {};
             for (var property in this) {
                 if (this.hasOwnProperty(property)) {
@@ -90,8 +87,8 @@
             }
             return serialObj;
         };
-        return skillPlan;
+        return trainingPlan;
     }
-    angular.module('compendium.plan')
-        .factory('SkillPlan', ['$q', 'lodash', 'pouchDB', SkillPlan]);
+    angular.module('compendium.training')
+        .factory('TrainingPlan', ['$q', 'lodash', 'pouchDB', TrainingPlan]);
 })();

@@ -1,0 +1,17 @@
+{
+    "libs": [
+    "browser",
+    "ecma5",
+    "ecma6"
+    ],
+    "loadEagerly": [
+        "/home/rudzha/Documents/EVECompendium/www/js/**/*.js"
+    ],
+    "plugins": {
+        "complete_strings" : {},
+        "doc_comment": {},
+        "angular": {
+            "fullDocs": true
+        }
+    }
+}

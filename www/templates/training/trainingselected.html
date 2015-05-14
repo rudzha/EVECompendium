@@ -1,0 +1,11 @@
+<ion-view view-title="{{training.name}}">
+    <ion-content padding="true" class="has-header">
+        <button class="button-clear" ng-click="delete()">DELETE</button>
+        <ion-list>
+            <ion-item class="item-text-wrap" ng-hide="checkIfEmpty(training.trainingPlan)">Either training is finished or no skills are present in skill plan</ion-item>
+            <ion-item ng-repeat="skill in training.trainingPlan">
+                {{skill}}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

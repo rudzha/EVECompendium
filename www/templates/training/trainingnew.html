@@ -1,0 +1,25 @@
+<ion-view view-title="New Training Plan">
+    <ion-content padding="true" scroll="true" class="has-header">
+        <form name="trainingform">
+            <button ng-click="saveTraining()">SAVE TRAINING</button>
+            <ion-list>
+                <ion-item>
+                    <h2>{{newtraining.name}}</h2>
+                </ion-item>
+                <ion-item>
+                    <label>Character</label>
+                    <select ng-model="newtraining.characterID"
+                            ng-options="character.characterID as character.name for (id, character) in characters"
+                            ng-change="updateName()">
+                    </select>
+                </ion-item>
+                <ion-item>
+                    <label>Skill Plan</label>
+                    <select ng-model="newtraining.planID"
+                            ng-options="plan._id as plan.name for (id, plan) in skillPlans"
+                            ng-change="updateName()"></select>
+                </ion-item>
+            </ion-list>
+        </form>
+    </ion-content>
+</ion-view>

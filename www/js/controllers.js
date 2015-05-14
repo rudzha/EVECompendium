@@ -1,6 +1,6 @@
 'use strict';
 angular.module('controllers', [])
-.controller('AppCtrl', function($scope, $state, Timer, settings, eve, skills) {
+.controller('AppCtrl', function($scope, $state, Timer, settings, eve, skills, skillPlans, trainingPlans) {
     Timer.start(settings.syncRate);
     $scope.eveApi = eve;
     $scope.skillTree = skills;

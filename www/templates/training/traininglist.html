@@ -1,0 +1,17 @@
+<ion-view view-title="Training Plans">
+    <ion-content padding="true">
+        <ion-list>
+            <ion-item ng-hide="checkIfEmpty(trainingPlans.plans)">No Training plans</ion-item>
+            <ion-item ng-repeat="training in trainingPlans.plans" href="#/app/training/{{training._id}}">
+                <h2>{{training.name}}</h2>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+    <div class="float-button">
+        <span class="height-fix">
+            <a ui-sref="app.training.new" class="content">
+                <i class="ion-plus-round"></i>
+            </a>
+        </span>
+    </div>
+</ion-view>

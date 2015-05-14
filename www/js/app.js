@@ -22,6 +22,7 @@ angular.module('compendium', [
     'compendium.background',
     'compendium.plan',
     'compendium.settings',
+    'compendium.training',
     'filters'
 ])
 .constant('CONFIG', {
@@ -95,6 +96,12 @@ angular.module('compendium', [
                         }
                     });
                     return dfd.promise;
+                },
+                skillPlans: function(SkillPlans) {
+                    return SkillPlans.init();
+                },
+                trainingPlans: function(TrainingPlans) {
+                    return TrainingPlans.init();
                 }
             }
         })
@@ -187,13 +194,6 @@ angular.module('compendium', [
                 'menuContent': {
                     templateUrl: 'templates/planner/plans.html',
                 }
-            },
-            resolve: {
-                skillPlans: function(SkillPlans) {
-                    return SkillPlans.init().then(function(){
-                        return SkillPlans;
-                    });
-                }
             }
         })
         .state('app.plans.new', {
@@ -229,6 +229,42 @@ angular.module('compendium', [
                 'plansview': {
                     templateUrl: 'templates/planner/planeditor.html',
                     controller: 'PlansEditorCtrl'
+                }
+            }
+        })
+        .state('app.training', {
+            url: '/training',
+            abstract: true,
+            views: {
+                'menuContent': {
+                    templateUrl: 'templates/training/training.html'
+                }
+            }
+        })
+        .state('app.training.list', {
+            url: '',
+            views: {
+                'trainingview': {
+                    templateUrl: 'templates/training/traininglist.html',
+                    controller: 'TrainingListCtrl'
+                }
+            }
+        })
+        .state('app.training.new', {
+            url: '/new',
+            views: {
+                'trainingview': {
+                    templateUrl: 'templates/training/trainingnew.html',
+                    controller: 'TrainingNewCtrl'
+                }
+            }
+        })
+        .state('app.training.selected', {
+            url: '/:id',
+            views: {
+                'trainingview': {
+                    templateUrl: 'templates/training/trainingselected.html',
+                    controller: 'TrainingSelectedCtrl'
                 }
             }
         })

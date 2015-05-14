@@ -23,16 +23,15 @@
          */
         this.init = function () {
             var self = this;
-            var promises = [];
-            var plans = localDB.allDocs({include_docs: true, startkey: 'Plan-', endkey: 'Plan-\uffff'}).then(function(response){
+            var dfd = $q.defer();
+            localDB.allDocs({include_docs: true, startkey: 'Plan-', endkey: 'Plan-\uffff'}).then(function(response){
                 self.skillPlans = lodash.transform(response.rows, function(result, item) {
                     result[item.id] = lodash.create(SkillPlan.prototype, item.doc);
                     return result;
                 },{});
-                return response;
+                dfd.resolve(self);
             });
-            promises.push(plans);
-            return $q.all(promises);
+            return dfd.promise;
         };
         /**
          * @ngdoc method

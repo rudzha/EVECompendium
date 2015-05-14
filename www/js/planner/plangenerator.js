@@ -14,7 +14,7 @@
         /**
          * @ngdoc method
          * @name generate
-         * @methodOf plan.
+         * @methodOf plan.SkillPlanGenerator
          * @description
          *
          * Method takes an array of Skill objects and iterates. Looking up each
