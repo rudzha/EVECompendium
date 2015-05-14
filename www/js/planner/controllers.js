@@ -25,7 +25,7 @@
      * Opens a modal for adding new skill.
      * Adds array of numbers to scope to get a number from the select/option dialog
      */
-    function PlansEditorCtrl ($scope, $state, $stateParams, $ionicModal, SkillPlanGenerator, lodash, skillPlans) {
+    function PlansEditorCtrl ($scope, $state, $stateParams, $ionicHistory, $ionicModal, SkillPlanGenerator, lodash, skillPlans) {
         $scope.showReorder = false;
         $scope.showDelete = false;
         $scope.levels = [1,2,3,4,5];
@@ -72,8 +72,10 @@
             $scope.modal.hide();
         };
         $scope.savePlan = function(plan) {
+            $ionicHistory.nextViewOptions({
+                disableBack: true
+            });
             $scope.plan.generatedSkillPlan = SkillPlanGenerator.generate($scope.plan.skillSeed);
-            console.log($scope.plan.generatedSkillPlan);
             if($scope.edit) {
                 $scope.plan.save().then(function(){
                     $state.go('app.plans.list');
@@ -108,6 +110,6 @@
     angular
         .module('compendium.plan')
         .controller('PlansCtrl', ['$scope', 'lodash', 'skillPlans', PlansCtrl])
-        .controller('PlansEditorCtrl', ['$scope', '$state', '$stateParams', '$ionicModal', 'SkillPlanGenerator', 'lodash', 'skillPlans', PlansEditorCtrl])
+        .controller('PlansEditorCtrl', ['$scope', '$state', '$stateParams', '$ionicHistory', '$ionicModal', 'SkillPlanGenerator', 'lodash', 'skillPlans', PlansEditorCtrl])
         .controller('PlanCtrl', ['$scope', '$state', '$stateParams', '$ionicHistory', 'skillPlans', PlanCtrl]);
 })();
