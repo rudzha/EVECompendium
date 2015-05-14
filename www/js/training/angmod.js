@@ -2,7 +2,7 @@
     'use strict';
     /**
      * @ngdoc object
-     * @name compendium.plan
+     * @name compendium.training
      * @description
      *
      * Module to contain services, controllers and views related to training plans.
