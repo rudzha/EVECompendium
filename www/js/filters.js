@@ -2,7 +2,6 @@
 angular.module('filters', [])
 .filter('GroupBy', function(lodash){
     return function(input, field) {
-        //console.log(input, field);
         var grouped = lodash.chain(input)
         .transform(function(result, item) {
             result.push(item[field]);
@@ -15,6 +14,8 @@ angular.module('filters', [])
     };
 }).filter('First', function(){
     return function(input) {
+        console.log(input);
+        console.log(input[0]);
         return input && input.length && input[0] || '';
     };
 }).filter('Last', function(){

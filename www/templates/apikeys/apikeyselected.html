@@ -1,0 +1,27 @@
+<ion-view view-title="API Key">
+    <ion-content padded="true">
+        <div class="list card">
+            <div class="item item-divider">
+                <h2>{{apikey.name}}</h2>
+            </div>
+            <div class="item">
+                <p>Key ID: {{apikey.keyID}}</p>
+                <p>Verification Code: {{apikey.verificationCode}}</p>
+                <p>Key Expires: {{apikey.expires}}</p>
+                <p>Key Status: {{apikey.status}}</p>
+            </div>
+            <div class="item item-divider">
+                <h2>Characters</h2>
+            </div>
+            <div class="item">
+                <p ng-repeat="character in apikey.characters">{{character}}</p>
+            </div>
+            <div class="item">
+                <button ng-click="deleteKey()" class="button button-block">
+                    <i class="icon ion-android-delete"></i>
+                    Delete key
+                </button>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

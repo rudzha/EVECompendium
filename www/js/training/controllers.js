@@ -24,14 +24,14 @@
      * character and a skill plan to base training plan on. Automatically assigns
      * it proper name.
      */
-    function TrainingNewCtrl($scope, $state, lodash, TrainingPlans, TrainingPlan, TrainingPlanGenerator, EVEAPIHolder, skillPlans) {
+    function TrainingNewCtrl($scope, $state, lodash, TrainingPlans, TrainingPlan, TrainingPlanGenerator, Characters, SkillsCurrentAll, skillPlans) {
         $scope.newtraining = new TrainingPlan();
-        $scope.characters = EVEAPIHolder.characters;
+        $scope.characters = Characters.list();
         $scope.skillPlans = skillPlans.skillPlans;
         $scope.updateName = function () {
             $scope.newtraining.name = '';
-            if(!lodash.isUndefined(EVEAPIHolder.characters[$scope.newtraining.characterID])){
-                $scope.newtraining.name += EVEAPIHolder.characters[$scope.newtraining.characterID].name + ' - ';
+            if(!lodash.isUndefined(Characters.read($scope.newtraining.characterID))){
+                $scope.newtraining.name += Characters.read($scope.newtraining.characterID).name + ' - ';
             }
             if(!lodash.isUndefined(skillPlans.skillPlans[$scope.newtraining.planID])){
                 $scope.newtraining.name += skillPlans.skillPlans[$scope.newtraining.planID].name;
@@ -39,7 +39,7 @@
         };
         $scope.saveTraining = function(){
             $scope.newtraining.trainingPlan = TrainingPlanGenerator
-                .generate(EVEAPIHolder.characters[$scope.newtraining.characterID].skills,
+                .generate(SkillsCurrentAll.read($scope.newtraining.characterID).skills,
                     skillPlans.skillPlans[$scope.newtraining.planID].generatedSkillPlan);
             TrainingPlans.create($scope.newtraining);
             $state.go('app.training.list');
@@ -66,6 +66,6 @@
     }
     angular.module('compendium.training')
         .controller('TrainingListCtrl', ['$scope', 'lodash', 'TrainingPlans', TrainingListCtrl])
-        .controller('TrainingNewCtrl', ['$scope', '$state', 'lodash', 'TrainingPlans', 'TrainingPlan', 'TrainingPlanGenerator', 'EVEAPIHolder', 'skillPlans', TrainingNewCtrl])
+        .controller('TrainingNewCtrl', ['$scope', '$state', 'lodash', 'TrainingPlans', 'TrainingPlan', 'TrainingPlanGenerator', 'Characters', 'SkillsCurrentAll', 'skillPlans', TrainingNewCtrl])
         .controller('TrainingSelectedCtrl', ['$scope', '$state', '$stateParams', 'lodash', 'trainingPlans', TrainingSelectedCtrl]);
 })();

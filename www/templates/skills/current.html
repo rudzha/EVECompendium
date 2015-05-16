@@ -3,17 +3,17 @@
         <div>
             <label class="item item-input">
                 <i class="icon ion-search placeholder-icon"></i>
-                <input ng-model="SkillSearch.skill" type="search" placeholder="Search">
+                <input ng-model="SkillSearch.name" type="search" placeholder="Search">
             </label>
         </div>
         <ion-list>
-            <div ng-repeat="group in currentSkills | filter: SkillSearch | GroupBy: 'group' | filter: group" ng-click="showgroup = (showgroup) ? false : true">
+            <div ng-repeat="group in currentSkills.skills | filter: SkillSearch | GroupBy: 'group' | filter: group" ng-click="showgroup = (showgroup) ? false : true">
                 <ion-item class="item item-icon-left" ng-class="{'active': showgroup}">
                     <i class="icon" ng-class="(showgroup) ? 'ion-arrow-down-b' : 'ion-arrow-right-b'"></i>
                     {{group}}
                 </ion-item>
-                <ion-item ng-show="showgroup" ng-repeat="skill in currentSkills | filter: group | filter:SkillSearch" ng-click="openSkillInfo(skill.skillID)">
-                    <span>{{skill.skill}}</span>
+                <ion-item ng-show="showgroup" ng-repeat="skill in currentSkills.skills | filter: group | filter:SkillSearch" ng-click="openSkillInfo(skill.skillID)">
+                    <span>{{skill.name}}</span>
                     <span class="item-note">{{skill.level}}</span>
                 </ion-item>
             </div>

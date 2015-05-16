@@ -10,7 +10,7 @@
      * In the end it returns a list of skills and their dependendies,
      * ordered by depenendency.
      */
-    function SkillPlanGenerator ($q, lodash, SkillTreeService) {
+    function SkillPlanGenerator ($q, lodash, SkillTree) {
         /**
          * @ngdoc method
          * @name generate
@@ -31,7 +31,7 @@
             .map(function(item) {
                 var result = [item];
                 for(var index = 0; index < result.length; index++){
-                    lodash.forEach(SkillTreeService.get(result[index].skillID).requiredSkills, function(skill){
+                    lodash.forEach(SkillTree.read(result[index].skillID).requiredSkills, function(skill){
                         result.push(skill);
                     });
                 }
@@ -53,7 +53,7 @@
                 return [item.skillID, item.level].join();
             })
             .map(function(skill) {
-                skill.name = SkillTreeService.get(skill.skillID).skillName;
+                skill.name = SkillTree.read(skill.skillID).skillName;
                 return skill;
             })
             .value();
@@ -62,5 +62,5 @@
         };
     }
     angular.module('compendium.plan')
-        .service('SkillPlanGenerator', ['$q', 'lodash', 'SkillTreeService', SkillPlanGenerator]);
+        .service('SkillPlanGenerator', ['$q', 'lodash', 'SkillTree', SkillPlanGenerator]);
 })();

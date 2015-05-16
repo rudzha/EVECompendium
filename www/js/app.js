@@ -13,16 +13,15 @@ angular.module('compendium', [
     'pouchdb',
 
     'controllers',
-    'services',
-    'apiholder',
-    'account',
-    'characters',
-    'skillqueue',
-    'skilltree',
+    'compendium.apikeys',
     'compendium.background',
+    'compendium.characters',
+    'compendium.monitor',
     'compendium.plan',
+    'compendium.skilltree',
     'compendium.settings',
     'compendium.training',
+    'compendium.utilities',
     'filters'
 ])
 .constant('CONFIG', {
@@ -54,45 +53,31 @@ angular.module('compendium', [
                 settings: function(Settings) {
                     return Settings.init();
                 },
-                eve: function($q, EVEAPIHolder, Timer) {
-                    var dfd = $q.defer();
-                    EVEAPIHolder.init().then(function(response) {
-                        console.log('INIT', response, EVEAPIHolder);
-                        if (EVEAPIHolder.isOutOfDate()) {
-                            console.log('INIT', 'Accounts out of date');
-                            EVEAPIHolder.refresh().then(function() {
-                                console.log('INIT', 'Accounts refreshed');
-                                return EVEAPIHolder.updateCharacters();
-                            }, function(error){
-                                console.log(error);
-                            }).then(function(){
-                                console.log('INIT', 'Characters refreshed');
-                                Timer.registerFunction(EVEAPIHolder.refresh);
-                                dfd.resolve(EVEAPIHolder);
-                            });
-                        } else {
-                            dfd.resolve(EVEAPIHolder);
-                            console.log('INIT', 'Accounts up to date');
-                        }
-                    }, function(error){
-                        console.log('INIT', error);
-                        dfd.resolve(EVEAPIHolder);
-                    });
-                    return dfd.promise;
+                apikeys: function(APIKeys) {
+                    return APIKeys.init();
                 },
-                skills: function($q, SkillTreeService) {
+                characters: function(Characters) {
+                    return Characters.init();
+                },
+                skillscurrent: function(SkillsCurrentAll) {
+                    return SkillsCurrentAll.init();
+                },
+                skillsqueue: function(SkillsQueues) {
+                    return SkillsQueues.init();
+                },
+                skilltree: function($q, SkillTree) {
                     var dfd = $q.defer();
-                    SkillTreeService.init().then(function() {
-                        if (SkillTreeService.isOutOfDate()) {
+                    SkillTree.init().then(function() {
+                        if (SkillTree.isOutOfDate()) {
                             console.log('INIT', 'SkillTree out of date');
-                            SkillTreeService.refresh().then(function() {
+                            SkillTree.refresh().then(function() {
                                 console.log('INIT', 'SkillTree refreshed');
-                                SkillTreeService.save();
-                                dfd.resolve(SkillTreeService);
+                                SkillTree.save();
+                                dfd.resolve(SkillTree);
                             });
                         } else {
                             console.log('INIT', 'SkillTree up to date');
-                            dfd.resolve(SkillTreeService);
+                            dfd.resolve(SkillTree);
                         }
                     });
                     return dfd.promise;
@@ -107,24 +92,37 @@ angular.module('compendium', [
         })
         .state('app.apikeys', {
             url: '/apikeys',
-            views: {
+            abstract: true,
+            views : {
                 'menuContent': {
-                    templateUrl: 'templates/apikeys/apikeys.html',
-                    controller: 'APIKeysCtrl'
+                    templateUrl: 'templates/apikeys/apikeys.html'
                 }
             }
         })
-        .state('app.apikey', {
-            url: '/apikeys/:keyID',
+        .state('app.apikeys.list', {
+            url: '',
             views: {
-                'menuContent': {
-                    templateUrl: 'templates/apikeys/apikey.html',
-                    controller: 'APIKeyCtrl'
+                'apikeysview': {
+                    templateUrl: 'templates/apikeys/apikeyslist.html',
+                    controller: 'APIKeysListCtrl'
                 }
-            },
-            resolve: {
-                keyID: function($stateParams) {
-                    return $stateParams.keyID;
+            }
+        })
+        .state('app.apikeys.selected', {
+            url: '/:id',
+            views: {
+                'apikeysview': {
+                    templateUrl: 'templates/apikeys/apikeyselected.html',
+                    controller: 'APIKeysSelectedCtrl'
+                }
+            }
+        })
+        .state('app.apikeys.new', {
+            url: '/new',
+            views: {
+                'apikeysview': {
+                    templateUrl: 'templates/apikeys/apikeysnew.html',
+                    controller: 'APIKeysNewCtrl'
                 }
             }
         })
@@ -132,17 +130,16 @@ angular.module('compendium', [
             url: '/characters',
             views: {
                 'menuContent': {
-                    templateUrl: 'templates/characters.html',
-                    controller: 'CharactersCtrl',
-                    controllerAs: 'vm'
+                    templateUrl: 'templates/characters/characters.html',
+                    controller: 'CharactersCtrl'
                 }
             }
         })
-        .state('app.character', {
-            url: '/characters/:characterID',
+        .state('app.charactersheet', {
+            url: '/characters/:id',
             views: {
                 'menuContent': {
-                    templateUrl: 'templates/charactersheet.html',
+                    templateUrl: 'templates/characters/charactersheet.html',
                     controller: 'CharacterSheetCtrl'
                 }
             }
@@ -159,7 +156,7 @@ angular.module('compendium', [
             }
         })
         .state('app.skills.queue', {
-            url: '/queue',
+            url: '/queue/:id',
             cache: false,
             views: {
                 'queue': {
@@ -169,7 +166,7 @@ angular.module('compendium', [
             }
         })
         .state('app.skills.current', {
-            url: '/current',
+            url: '/current/:id',
             cache: false,
             views: {
                 'current': {

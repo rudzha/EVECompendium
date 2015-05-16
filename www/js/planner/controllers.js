@@ -25,7 +25,7 @@
      * Opens a modal for adding new skill.
      * Adds array of numbers to scope to get a number from the select/option dialog
      */
-    function PlansEditorCtrl ($scope, $state, $stateParams, $ionicHistory, $ionicModal, SkillPlanGenerator, lodash, skillPlans) {
+    function PlansEditorCtrl ($scope, $state, $stateParams, $ionicHistory, $ionicModal, SkillTree, SkillPlanGenerator, lodash, skillPlans) {
         $scope.showReorder = false;
         $scope.showDelete = false;
         $scope.levels = [1,2,3,4,5];
@@ -41,7 +41,7 @@
                 skillSeed: []
             };
         }
-        $scope.allSkills = lodash.transform($scope.skillTree.skillTree, function(result, item) {
+        $scope.allSkills = lodash.transform(SkillTree.list(), function(result, item) {
             result.push(item);
             return result;
         },[]);
@@ -55,7 +55,7 @@
         };
         $scope.AddSkillToSeed = function(id) {
             if(!lodash.findWhere($scope.plan.skillSeed, {skillID: id})){
-                var temp = $scope.skillTree.get(id);
+                var temp = SkillTree.read(id);
                 temp = {name: temp.skillName, skillID: temp.skillID, level: 1, requiredSkills: temp.requiredSkills, requiredAttributes: temp.requiredAttributes};
                 $scope.plan.skillSeed.push(temp);
             }
@@ -107,9 +107,8 @@
             });
         };
     }
-    angular
-        .module('compendium.plan')
+    angular.module('compendium.plan')
         .controller('PlansCtrl', ['$scope', 'lodash', 'skillPlans', PlansCtrl])
-        .controller('PlansEditorCtrl', ['$scope', '$state', '$stateParams', '$ionicHistory', '$ionicModal', 'SkillPlanGenerator', 'lodash', 'skillPlans', PlansEditorCtrl])
+        .controller('PlansEditorCtrl', ['$scope', '$state', '$stateParams', '$ionicHistory', '$ionicModal', 'SkillTree', 'SkillPlanGenerator', 'lodash', 'skillPlans', PlansEditorCtrl])
         .controller('PlanCtrl', ['$scope', '$state', '$stateParams', '$ionicHistory', 'skillPlans', PlanCtrl]);
 })();

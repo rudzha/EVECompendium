@@ -1,0 +1,34 @@
+<ion-view view-title="Character Sheet">
+    <ion-content>
+        <div class="list card padded">
+            <div class="item item-image">
+                <img ng-src="http://image.eveonline.com/character/{{character.characterID}}_512.jpg">
+            </div>
+            <div class="item">
+                <h2>{{character.name}}</h2>
+                <p>{{character.corporationName}}</p>
+                <p>{{character.allianceName}}</p>
+            </div>
+            <div class="item">
+                <p>Birthday: {{character.dateOfBirth}}</p>
+                <p>{{character.race}} - {{character.bloodline}} - {{character.ancestry}}</p>
+                <p>Balance: {{character.balance}} isk</p>
+            </div>
+            <div class="item">
+                <h2>Attributes</h2>
+                <div class="row" ng-repeat="(attribute, value) in character.attributes">
+                    <div class="col">
+                        <p>{{attribute}}</p>
+                    </div>
+                    <div class="col col-20">
+                        <p>{{value}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <h2>Implants</h2>
+                <p ng-repeat="implant in character.implants">{{implant.implantName}}</p>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

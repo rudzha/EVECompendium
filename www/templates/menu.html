@@ -9,7 +9,7 @@
       </ion-nav-buttons>
       <ion-nav-buttons side="right">
           <button class="button button-icon icon ion-refresh" ng-click="refresh()"></button>
-          <button class="button button-icon icon ion-key" ng-click="gotoApiKeys()"></button>
+          <button class="button button-icon icon ion-key" ui-sref="app.apikeys.list"></button>
       </ion-nav-buttons>
     </ion-nav-bar>
     <ion-nav-view name="menuContent"></ion-nav-view>
@@ -22,14 +22,14 @@
       <ion-list>
         <ion-item class='item item-divider item-avatar'>
             <img ng-src="http://image.eveonline.com/character/{{settings.selectedCharacter}}_512.jpg"></img>
-            <h2>{{eveApi.characters[settings.selectedCharacter].name}}</h2>
+            <h2>{{characters.read(settings.selectedCharacter).name}}</h2>
             <p>{{settings.selectedCharacter}}</p>
             <br/>
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/characters">Characters</ion-item>
+        <ion-item nav-clear menu-close ui-sref="app.characters">Characters</ion-item>
         <ion-item class="item-divider">Details</ion-item>
-        <ion-item nav-clear menu-close ui-sref="app.character({characterID: settings.selectedCharacter})">Sheet</ion-item>
-        <ion-item nav-clear menu-close href="#/app/skills/current">Skills</ion-item>
+        <ion-item nav-clear menu-close ui-sref="app.charactersheet({id: settings.selectedCharacter})">Sheet</ion-item>
+        <ion-item nav-clear menu-close ui-sref="app.skills.current({id: settings.selectedCharacter})">Skills</ion-item>
         <ion-item class="item-divider">Planner</ion-item>
         <ion-item nav-clear menu-close ui-sref="app.plans.list">Skill plans</ion-item>
         <ion-item nav-clear menu-close ui-sref="app.training.list">Training plans</ion-item>
