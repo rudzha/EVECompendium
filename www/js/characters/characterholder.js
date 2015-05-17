@@ -7,7 +7,7 @@
      *
      * Interface for Charcter object management
      */
-    function Characters ($q, pouchDB, lodash, Character) {
+    function Characters ($q, pouchDB, ObjectSerializer, lodash, Character) {
         var localDB = new pouchDB('compendium');
         this.characters = {};
         this.outOfDate = false;
@@ -60,9 +60,14 @@
         this.create = function(character) {
             var self = this;
             character._id = character._id + character.characterID;
-            return character.save().then(function(response){
+            return localDB.put(ObjectSerializer.serialize(character))
+            .then(function(response){
+                character._rev = response.rev;
                 self.characters[character.characterID] = character;
-                return response;
+                return character;
+            })
+            .catch(function(error) {
+                return error;
             });
         };
         /**
@@ -87,26 +92,36 @@
          * @param {string} Character ID
          * @returns {object} Promise containing Character.save response
          */
-        this.update = function(id) {
+        this.update = function(character) {
             var self = this;
-            return self.characters[id].save();
+            return localDB.put(ObjectSerializer.serialize(character))
+            .then(function(response){
+                character._rev = response.rev;
+            })
+            .catch(function(error){
+                return error;
+            });
         };
         /**
          * @ngdoc method
          * @name delete
          * @description
          *
-         * Takes Character ID, looks it up in dictionary, calls it's delete method,
+         * Takes Character ID, gets it from database, removes it from,
          * once it's deleted, removes it from the dictionary
          */
         this.delete = function(id) {
             var self = this;
-            return self.characters[id].delete().then(function(response){
+            return localDB.get(self.characters[id]._id)
+            .then(function(response) {
                 delete self.characters[id];
-                return response;
+                return localDB.remove(response);
+            })
+            .catch(function(error){
+                return error;
             });
         };
     }
     angular.module('compendium.characters')
-        .service('Characters', ['$q', 'pouchDB', 'lodash', 'Character', Characters]);
+        .service('Characters', ['$q', 'pouchDB', 'ObjectSerializer', 'lodash', 'Character', Characters]);
 })();

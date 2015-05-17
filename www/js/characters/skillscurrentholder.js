@@ -7,7 +7,7 @@
      *
      * Interface for SkillsCurrentAll object management
      */
-    function SkillsCurrentAll ($q, pouchDB, lodash, SkillsCurrent) {
+    function SkillsCurrentAll ($q, pouchDB, lodash, SkillsCurrent, ObjectSerializer) {
         var localDB = new pouchDB('compendium');
         this.skills = {};
         this.outOfDate = false;
@@ -61,9 +61,14 @@
         this.create = function(skills) {
             var self = this;
             skills._id = skills._id + skills.characterID;
-            return skills.save().then(function(response){
+            return localDB.put(ObjectSerializer.serialize(skills))
+            .then(function(response){
+                skills._rev = response.rev;
                 self.skills[skills.characterID] = skills;
-                return response;
+                return skills;
+            })
+            .catch(function(error) {
+                return error;
             });
         };
         /**
@@ -88,9 +93,15 @@
          * @param {string} SkillsCurrent ID
          * @returns {object} Promise containing SkillsCurrent.save response
          */
-        this.update = function(id) {
+        this.update = function(skills) {
             var self = this;
-            return self.skills[id].save();
+            return localDB.put(ObjectSerializer.serialize(skills))
+            .then(function(response){
+                skills._rev = response.rev;
+            })
+            .catch(function(error){
+                return error;
+            });
         };
         /**
          * @ngdoc method
@@ -102,12 +113,16 @@
          */
         this.delete = function(id) {
             var self = this;
-            return self.skills[id].delete().then(function(response){
+            return localDB.get(self.skills[id]._id)
+            .then(function(response) {
                 delete self.skills[id];
-                return response;
+                return localDB.remove(response);
+            })
+            .catch(function(error){
+                return error;
             });
         };
     }
     angular.module('compendium.characters')
-        .service('SkillsCurrentAll', ['$q', 'pouchDB', 'lodash', 'SkillsCurrent', SkillsCurrentAll]);
+        .service('SkillsCurrentAll', ['$q', 'pouchDB', 'lodash', 'SkillsCurrent', 'ObjectSerializer', SkillsCurrentAll]);
 })();

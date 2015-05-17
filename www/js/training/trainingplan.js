@@ -7,7 +7,7 @@
      *
      * Factory for creation of TrainingPlan objects.
      */
-    function TrainingPlan($q, lodash, pouchDB) {
+    function TrainingPlan($q, lodash, pouchDB, SkillsCurrentAll, SkillsQueues, SkillPlans, TrainingPlanGenerator) {
         var localDB = new pouchDB('compendium');
         /**
          * @ngdoc method
@@ -68,6 +68,20 @@
             });
             return dfd.promise;
         };
+        trainingPlan.prototype.generate = function() {
+            var self = this;
+            var dfd = $q.defer();
+            var char = SkillsCurrentAll.read(self.characterID).skills;
+            var queue = SkillsQueues.read(self.characterID).skills;
+            var plan = SkillPlans.read(self.planID).generatedSkillPlan;
+            if(!lodash.isUndefined(char) && !lodash.isUndefined(plan) && !lodash.isUndefined(queue)){
+                self.trainingPlan = TrainingPlanGenerator.generate(char, queue, plan);
+                dfd.resolve(self);
+            } else {
+                dfd.reject('Missing parts');
+            }
+            return dfd.promise;
+        };
         /**
          * @ngdoc method
          * @name serialize
@@ -90,5 +104,5 @@
         return trainingPlan;
     }
     angular.module('compendium.training')
-        .factory('TrainingPlan', ['$q', 'lodash', 'pouchDB', TrainingPlan]);
+        .factory('TrainingPlan', ['$q', 'lodash', 'pouchDB', 'SkillsCurrentAll', 'SkillsQueues', 'SkillPlans', 'TrainingPlanGenerator', TrainingPlan]);
 })();

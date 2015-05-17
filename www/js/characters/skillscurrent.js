@@ -7,8 +7,7 @@
      *
      * Factory for new SkillsCurrent object creation
      */
-    function SkillsCurrent(CONFIG, $q, $http, pouchDB, lodash, ObjectSerializer, XML2JSON, SkillTree) {
-        var localDB = new pouchDB('compendium');
+    function SkillsCurrent(CONFIG, $q, $http, lodash, XML2JSON, SkillTree) {
         /**
          * @ngdoc method
          * @constructs Character
@@ -21,46 +20,6 @@
             this._rev = '';
             this.characterID = '';
             this.skills = [];
-        };
-        /**
-         * @ngdoc method
-         * @name save
-         * @description
-         *
-         * Saves SkillsCurrent object to database
-         * @returns {object} Promise containing database response
-         */
-        skillsCurrent.prototype.save = function() {
-            var self = this;
-            var dfd = $q.defer();
-            localDB.put(ObjectSerializer.serialize(self))
-            .then(function(response){
-                self._rev = response.rev;
-                dfd.resolve(response);
-            }).catch(function(error){
-                dfd.reject(error);
-            });
-            return dfd.promise;
-        };
-        /**
-         * @ngdoc method
-         * @name delete
-         * @description
-         *
-         * Deletes SkillsCurrent object from database
-         * @returns {object} Promise containing database response
-         */
-        skillsCurrent.prototype.delete = function() {
-            var self = this;
-            var dfd = $q.defer();
-            localDB.get(self._id).then(function(response){
-                return localDB.remove(response);
-            }).then(function(response){
-                dfd.resolve(response);
-            }).catch(function(error){
-                dfd.reject(error);
-            });
-            return dfd.promise;
         };
         /**
          * @ngdoc method
@@ -102,5 +61,5 @@
     }
     angular
         .module('compendium.characters')
-            .factory('SkillsCurrent', ['CONFIG', '$q', '$http', 'pouchDB', 'lodash', 'ObjectSerializer', 'XML2JSON', 'SkillTree', SkillsCurrent]);
+            .factory('SkillsCurrent', ['CONFIG', '$q', '$http', 'lodash', 'XML2JSON', 'SkillTree', SkillsCurrent]);
 })();

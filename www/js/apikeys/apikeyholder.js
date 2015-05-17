@@ -7,7 +7,7 @@
      *
      * API Key interface to manage all APIKey objects
      */
-    function APIKeys ($q, pouchDB, lodash, APIKey) {
+    function APIKeys ($q, pouchDB, lodash, APIKey, ObjectSerializer) {
         var localDB = new pouchDB('compendium');
         this.keys = {};
         this.outOfDate = false;
@@ -60,9 +60,15 @@
         this.create = function(apikey) {
             var self = this;
             apikey._id = apikey._id + apikey.keyID;
-            return apikey.save().then(function(response){
+            return localDB.put(ObjectSerializer.serialize(apikey))
+            .then(function(response){
+                console.log(response);
+                apikey._rev = response.rev;
                 self.keys[apikey.keyID] = apikey;
-                return response;
+                return apikey;
+            })
+            .catch(function(error) {
+                return error;
             });
         };
         /**
@@ -87,9 +93,15 @@
          * @param {string} APIkey ID
          * @returns {object} Promise containing APIKey.save response
          */
-        this.update = function(id) {
+        this.update = function(apikey) {
             var self = this;
-            return self.keys[id].save();
+            return localDB.put(ObjectSerializer.serialize(apikey))
+            .then(function(response){
+                apikey._rev = response.rev;
+            })
+            .catch(function(error){
+                return error;
+            });
         };
         /**
          * @ngdoc method
@@ -101,12 +113,16 @@
          */
         this.delete = function(id) {
             var self = this;
-            return self.keys[id].delete().then(function(response){
+            return localDB.get(self.keys[id]._id)
+            .then(function(response) {
                 delete self.keys[id];
-                return response;
+                return localDB.remove(response);
+            })
+            .catch(function(error){
+                return error;
             });
         };
     }
     angular.module('compendium.apikeys')
-        .service('APIKeys', ['$q', 'pouchDB', 'lodash', 'APIKey', APIKeys]);
+        .service('APIKeys', ['$q', 'pouchDB', 'lodash', 'APIKey', 'ObjectSerializer', APIKeys]);
 })();

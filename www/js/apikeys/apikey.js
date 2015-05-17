@@ -7,8 +7,7 @@
      *
      * Factory to construct APIKey objects for API Key management
      */
-    function APIKey (CONFIG, $q, $http, pouchDB, lodash, ObjectSerializer, XML2JSON) {
-        var localDB = new pouchDB('compendium');
+    function APIKey (CONFIG, $q, $http, lodash, XML2JSON) {
         /**
          * @ngdoc method
          * @constructs APIKey
@@ -27,47 +26,6 @@
             this.accessMask = '';
             this.status = 'New';
             this.characters = [];
-        };
-        /**
-         * @ngdoc method
-         * @name save
-         * @description
-         *
-         * Saves APIKey object to database, uses ObjectSerializer to copy and
-         * strip object
-         * @returns {object} Promise containing database response
-         */
-        apiKey.prototype.save = function() {
-            var self = this;
-            var dfd = $q.defer();
-            localDB.put(ObjectSerializer.serialize(self))
-            .then(function(response){
-                self._rev = response.rev;
-                dfd.resolve(response);
-            }).catch(function(error){
-                dfd.reject(error);
-            });
-            return dfd.promise;
-        };
-        /**
-         * @ngdoc method
-         * @name delete
-         * @description
-         *
-         * Deletes the APIKey object
-         * @returns {object} Promise containing database response
-         */
-        apiKey.prototype.delete = function() {
-            var self = this;
-            var dfd = $q.defer();
-            localDB.get(self._id).then(function(response){
-                return localDB.remove(response);
-            }).then(function(response){
-                dfd.resolve(response);
-            }).catch(function(error){
-                dfd.reject(error);
-            });
-            return dfd.promise;
         };
         /**
          * @ngdoc method
@@ -108,5 +66,5 @@
     }
     angular
         .module('compendium.apikeys')
-            .factory('APIKey', ['CONFIG', '$q', '$http', 'pouchDB', 'lodash', 'ObjectSerializer', 'XML2JSON', APIKey]);
+            .factory('APIKey', ['CONFIG', '$q', '$http', 'lodash', 'XML2JSON', APIKey]);
 })();

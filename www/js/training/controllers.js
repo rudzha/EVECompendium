@@ -38,11 +38,11 @@
             }
         };
         $scope.saveTraining = function(){
-            $scope.newtraining.trainingPlan = TrainingPlanGenerator
-                .generate(SkillsCurrentAll.read($scope.newtraining.characterID).skills,
-                    SkillsQueues.read($scope.newtraining.characterID).skills,
-                    skillPlans.skillPlans[$scope.newtraining.planID].generatedSkillPlan);
-            TrainingPlans.create($scope.newtraining);
+            $scope.newtraining.generate()
+            .then(function(response){
+                console.log(response);
+                TrainingPlans.create($scope.newtraining);
+            });
             $state.go('app.training.list');
         };
     }
@@ -53,12 +53,15 @@
      *
      * Controller for the individual training plan view.
      */
-    function TrainingSelectedCtrl($scope, $state, $stateParams, lodash, trainingPlans){
+    function TrainingSelectedCtrl($scope, $state, $stateParams, $ionicHistory, lodash, trainingPlans){
         $scope.training = trainingPlans.read($stateParams.id);
         $scope.checkIfEmpty = function(object) {
             return lodash.size(object);
         };
         $scope.delete = function(){
+            $ionicHistory.nextViewOptions({
+                disableBack: true
+            });
             trainingPlans.delete($scope.training._id).then(function(response){
                 console.log(response);
                 $state.go('app.training.list');
@@ -68,5 +71,5 @@
     angular.module('compendium.training')
         .controller('TrainingListCtrl', ['$scope', 'lodash', 'TrainingPlans', TrainingListCtrl])
         .controller('TrainingNewCtrl', ['$scope', '$state', 'lodash', 'TrainingPlans', 'TrainingPlan', 'TrainingPlanGenerator', 'Characters', 'SkillsCurrentAll', 'SkillsQueues', 'skillPlans', TrainingNewCtrl])
-        .controller('TrainingSelectedCtrl', ['$scope', '$state', '$stateParams', 'lodash', 'trainingPlans', TrainingSelectedCtrl]);
+        .controller('TrainingSelectedCtrl', ['$scope', '$state', '$stateParams', '$ionicHistory', 'lodash', 'trainingPlans', TrainingSelectedCtrl]);
 })();

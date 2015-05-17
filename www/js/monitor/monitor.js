@@ -7,7 +7,15 @@
      *
      *
      */
-    function Monitor(lodash, APIKeys, Characters, Character, SkillsCurrentAll, SkillsCurrent, SkillsQueues, SkillsQueue) {
+    function Monitor(lodash,
+                        APIKeys,
+                        Characters,
+                        Character,
+                        SkillsCurrentAll,
+                        SkillsCurrent,
+                        SkillsQueues,
+                        SkillsQueue,
+                        TrainingPlans) {
         /**
          * @ngdoc function
          * @name refreshCharacters
@@ -29,7 +37,10 @@
                     });
                 } else {
                     var tempChar = Characters.read(char);
-                    return tempChar.refresh(key.keyID, key.verificationCode);
+                    return tempChar.refresh(key.keyID, key.verificationCode)
+                    .then(function(response){
+                        return Characters.update(tempChar);
+                    });
                 }
             });
         }
@@ -54,7 +65,10 @@
                     });
                 } else {
                     var tempChar = SkillsCurrentAll.read(char);
-                    return tempChar.refresh(key.keyID, key.verificationCode);
+                    return tempChar.refresh(key.keyID, key.verificationCode)
+                    .then(function(response){
+                        return SkillsCurrentAll.update(tempChar);
+                    });
                 }
             });
         }
@@ -79,8 +93,16 @@
                     });
                 } else {
                     var tempChar = SkillsQueues.read(char);
-                    return tempChar.refresh(key.keyID, key.verificationCode);
+                    return tempChar.refresh(key.keyID, key.verificationCode)
+                    .then(function(response){
+                        return SkillsQueues.update(tempChar);
+                    });
                 }
+            });
+        }
+        function refreshTrainingPlans() {
+            lodash.forEach(TrainingPlans.list(), function(item) {
+                item.generate();
             });
         }
         /**
@@ -93,17 +115,27 @@
         this.refresh = function() {
             var self = this;
             var apikeys = APIKeys.list();
-            console.log(apikeys);
             lodash.forEach(apikeys, function(key) {
                 key.refresh().then(function() {
                     refreshCharacters(key);
                     refreshSkillsCurrent(key);
                     refreshSkillsQueue(key);
+                    refreshTrainingPlans();
                 });
+                APIKeys.update(key);
             });
         };
     }
     angular
         .module('compendium.monitor')
-            .service('Monitor', ['lodash', 'APIKeys', 'Characters', 'Character', 'SkillsCurrentAll', 'SkillsCurrent', 'SkillsQueues', 'SkillsQueue', Monitor]);
+            .service('Monitor', ['lodash',
+                                    'APIKeys',
+                                    'Characters',
+                                    'Character',
+                                    'SkillsCurrentAll',
+                                    'SkillsCurrent',
+                                    'SkillsQueues',
+                                    'SkillsQueue',
+                                    'TrainingPlans',
+                                    Monitor]);
 })();

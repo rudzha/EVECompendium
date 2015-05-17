@@ -12,17 +12,20 @@ angular.module('filters', [])
         .value();
         return grouped;
     };
-}).filter('First', function(){
+})
+.filter('First', function(){
     return function(input) {
         console.log(input);
         console.log(input[0]);
         return input && input.length && input[0] || '';
     };
-}).filter('Last', function(){
+})
+.filter('Last', function(){
     return function(input) {
         return input && input.length && input[input.length-1] || '';
     };
-}).filter('TimeDifference', function(){
+})
+.filter('TimeDifference', function(){
     return function(input, compareTo) {
         var diff = (input-compareTo) > 0 ? input-compareTo : compareTo-input;
         var years = Math.floor(diff/31556926000);

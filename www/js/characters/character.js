@@ -7,8 +7,7 @@
      *
      * Factory for new Character object creation
      */
-    function Character(CONFIG, $q, $http, pouchDB, lodash, ObjectSerializer, XML2JSON) {
-        var localDB = new pouchDB('compendium');
+    function Character(CONFIG, $q, $http, lodash, XML2JSON) {
         /**
          * @ngdoc method
          * @constructs Character
@@ -29,46 +28,6 @@
             this.allianceName = '';
             this.balance = '';
             this.attributes = [];
-        };
-        /**
-         * @ngdoc method
-         * @name save
-         * @description
-         *
-         * Saves Character object to database
-         * @returns {object} Promise containing database response
-         */
-        character.prototype.save = function() {
-            var self = this;
-            var dfd = $q.defer();
-            localDB.put(ObjectSerializer.serialize(self))
-            .then(function(response){
-                self._rev = response.rev;
-                dfd.resolve(response);
-            }).catch(function(error){
-                dfd.reject(error);
-            });
-            return dfd.promise;
-        };
-        /**
-         * @ngdoc method
-         * @name delete
-         * @description
-         *
-         * Deletes Character object from database
-         * @returns {object} Promise containing database response
-         */
-        character.prototype.delete = function() {
-            var self = this;
-            var dfd = $q.defer();
-            localDB.get(self._id).then(function(response){
-                return localDB.remove(response);
-            }).then(function(response){
-                dfd.resolve(response);
-            }).catch(function(error){
-                dfd.reject(error);
-            });
-            return dfd.promise;
         };
         /**
          * @ngdoc method
@@ -118,5 +77,5 @@
     }
     angular
         .module('compendium.characters')
-            .factory('Character', ['CONFIG', '$q', '$http', 'pouchDB', 'lodash', 'ObjectSerializer', 'XML2JSON', Character]);
+            .factory('Character', ['CONFIG', '$q', '$http', 'lodash', 'XML2JSON', Character]);
 })();

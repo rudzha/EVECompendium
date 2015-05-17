@@ -2,11 +2,10 @@
     'use strict';
     /**
      * @ngdoc object
-     * @name compendium.characters
+     * @name compendium.skilltree
      * @description
      *
-     * Module to contain all services required and used by
-     * the character management functionality of the application.
+     * SKill tree
      */
     angular
         .module('compendium.skilltree', ['pouchdb', 'ngLodash', 'compendium.utilities']);

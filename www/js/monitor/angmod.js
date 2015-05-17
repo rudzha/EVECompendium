@@ -12,5 +12,6 @@
                                         'ngLodash',
                                         'compendium.apikeys',
                                         'compendium.characters',
+                                        'compendium.training',
                                         'compendium.utilities']);
 })();
