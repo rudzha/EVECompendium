@@ -24,7 +24,7 @@
      * character and a skill plan to base training plan on. Automatically assigns
      * it proper name.
      */
-    function TrainingNewCtrl($scope, $state, lodash, TrainingPlans, TrainingPlan, TrainingPlanGenerator, Characters, SkillsCurrentAll, skillPlans) {
+    function TrainingNewCtrl($scope, $state, lodash, TrainingPlans, TrainingPlan, TrainingPlanGenerator, Characters, SkillsCurrentAll, SkillsQueues, skillPlans) {
         $scope.newtraining = new TrainingPlan();
         $scope.characters = Characters.list();
         $scope.skillPlans = skillPlans.skillPlans;
@@ -40,6 +40,7 @@
         $scope.saveTraining = function(){
             $scope.newtraining.trainingPlan = TrainingPlanGenerator
                 .generate(SkillsCurrentAll.read($scope.newtraining.characterID).skills,
+                    SkillsQueues.read($scope.newtraining.characterID).skills,
                     skillPlans.skillPlans[$scope.newtraining.planID].generatedSkillPlan);
             TrainingPlans.create($scope.newtraining);
             $state.go('app.training.list');
@@ -66,6 +67,6 @@
     }
     angular.module('compendium.training')
         .controller('TrainingListCtrl', ['$scope', 'lodash', 'TrainingPlans', TrainingListCtrl])
-        .controller('TrainingNewCtrl', ['$scope', '$state', 'lodash', 'TrainingPlans', 'TrainingPlan', 'TrainingPlanGenerator', 'Characters', 'SkillsCurrentAll', 'skillPlans', TrainingNewCtrl])
+        .controller('TrainingNewCtrl', ['$scope', '$state', 'lodash', 'TrainingPlans', 'TrainingPlan', 'TrainingPlanGenerator', 'Characters', 'SkillsCurrentAll', 'SkillsQueues', 'skillPlans', TrainingNewCtrl])
         .controller('TrainingSelectedCtrl', ['$scope', '$state', '$stateParams', 'lodash', 'trainingPlans', TrainingSelectedCtrl]);
 })();

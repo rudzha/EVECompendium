@@ -6,6 +6,7 @@
             <ion-item ng-repeat="skill in training.trainingPlan">
                 <h2>{{skill.name}}</h2>
                 <p>Level {{skill.level}}</p>
+                <p ng-show="skill.inQueue"><i class="ion-android-list"></i> In character's skill queue</p>
                 <p ng-show="skill.bookNeeded"><i class="ion-ios-book"></i> Skillbook needed</p>
             </ion-item>
         </ion-list>

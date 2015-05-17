@@ -19,11 +19,13 @@
          * skill character has. Then it filters skillplan removing every skill
          * that is already in the expanded character's skill list. Once list is
          * filtered, it checks if a skillbook is required for each skill.
+         * Finally it compares it to the character's skill queue and checks if
+         * skills are already present in the skill queue
          * @param {array} List of character's current skills
          * @param {array} List of skills from the SKillPlan
          * @returns {array} List of skills character requires
          */
-        this.generate = function(charSkills, planSkills) {
+        this.generate = function(charSkills, queueSkills, planSkills) {
             var expandedCharSkills = lodash.chain(charSkills)
             .map(function(skill) {
                 var result = [];
@@ -41,6 +43,10 @@
             })
             .map(function(skill) {
                 skill.bookNeeded = !lodash.findWhere(expandedCharSkills, {skillID: skill.skillID, level: 0});
+                return skill;
+            })
+            .map(function(skill) {
+                skill.inQueue = !!lodash.findWhere(queueSkills, {skillID: skill.skillID, level: skill.level});
                 return skill;
             })
             .value();
