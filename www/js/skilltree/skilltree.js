@@ -30,7 +30,6 @@
             });
             return dfd.promise;
         };
-        // TODO: Create and use date from user settings service
         this.list = function() {
             var self = this;
             return lodash.transform(self.skillTree, function(result, skills){

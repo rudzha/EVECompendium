@@ -22,6 +22,7 @@
          * Finally it compares it to the character's skill queue and checks if
          * skills are already present in the skill queue
          * @param {array} List of character's current skills
+         * @param {array} List of skills from the SkillQueue
          * @param {array} List of skills from the SKillPlan
          * @returns {array} List of skills character requires
          */

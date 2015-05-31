@@ -25,7 +25,17 @@
      * Opens a modal for adding new skill.
      * Adds array of numbers to scope to get a number from the select/option dialog
      */
-    function PlansEditorCtrl ($scope, $state, $stateParams, $ionicHistory, $ionicModal, SkillTree, SkillPlanGenerator, lodash, skillPlans) {
+    function PlansEditorCtrl ($scope,
+                                $state,
+                                $stateParams,
+                                $ionicHistory,
+                                $ionicModal,
+                                SkillTree,
+                                SkillPlanGenerator,
+                                SkillPlan,
+                                Monitor,
+                                lodash,
+                                skillPlans) {
         $scope.showReorder = false;
         $scope.showDelete = false;
         $scope.levels = [1,2,3,4,5];
@@ -36,10 +46,7 @@
         } else {
             console.log('New');
             $scope.edit = false;
-            $scope.plan = {
-                name: '',
-                skillSeed: []
-            };
+            $scope.plan = new SkillPlan();
         }
         $scope.allSkills = lodash.transform(SkillTree.list(), function(result, item) {
             result.push(item);
@@ -77,7 +84,8 @@
             });
             $scope.plan.generatedSkillPlan = SkillPlanGenerator.generate($scope.plan.skillSeed);
             if($scope.edit) {
-                $scope.plan.save().then(function(){
+                skillPlans.update(plan).then(function () {
+                    Monitor.refresh();
                     $state.go('app.plans.list');
                 });
             } else {
@@ -109,6 +117,18 @@
     }
     angular.module('compendium.plan')
         .controller('PlansCtrl', ['$scope', 'lodash', 'skillPlans', PlansCtrl])
-        .controller('PlansEditorCtrl', ['$scope', '$state', '$stateParams', '$ionicHistory', '$ionicModal', 'SkillTree', 'SkillPlanGenerator', 'lodash', 'skillPlans', PlansEditorCtrl])
+        .controller('PlansEditorCtrl', ['$scope',
+                                        '$state',
+                                        '$stateParams',
+                                        '$ionicHistory',
+                                        '$ionicModal',
+                                        'SkillTree',
+                                        'SkillPlanGenerator',
+                                        'SkillPlan',
+                                        'Monitor',
+                                        'lodash',
+                                        'skillPlans',
+                                        PlansEditorCtrl
+                                        ])
         .controller('PlanCtrl', ['$scope', '$state', '$stateParams', '$ionicHistory', 'skillPlans', PlanCtrl]);
 })();

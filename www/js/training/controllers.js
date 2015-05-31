@@ -27,14 +27,16 @@
     function TrainingNewCtrl($scope, $state, lodash, TrainingPlans, TrainingPlan, TrainingPlanGenerator, Characters, SkillsCurrentAll, SkillsQueues, skillPlans) {
         $scope.newtraining = new TrainingPlan();
         $scope.characters = Characters.list();
-        $scope.skillPlans = skillPlans.skillPlans;
+        $scope.skillPlans = skillPlans.list();
         $scope.updateName = function () {
             $scope.newtraining.name = '';
-            if(!lodash.isUndefined(Characters.read($scope.newtraining.characterID))){
-                $scope.newtraining.name += Characters.read($scope.newtraining.characterID).name + ' - ';
+            var tempCharacter = Characters.read($scope.newtraining.characterID);
+            if(!lodash.isUndefined(tempCharacter)){
+                $scope.newtraining.name += tempCharacter.name + ' - ';
             }
-            if(!lodash.isUndefined(skillPlans.skillPlans[$scope.newtraining.planID])){
-                $scope.newtraining.name += skillPlans.skillPlans[$scope.newtraining.planID].name;
+            var tempSkillPlan = skillPlans.skillPlans[$scope.newtraining.planID];
+            if(!lodash.isUndefined(tempSkillPlan)){
+                $scope.newtraining.name += tempSkillPlan.name;
             }
         };
         $scope.saveTraining = function(){

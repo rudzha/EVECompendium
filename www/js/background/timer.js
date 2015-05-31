@@ -91,6 +91,7 @@
 
         }
     }
-    angular.module('compendium.background')
-        .service('Timer', ['$interval', 'lodash', Timer]);
+    angular
+        .module('compendium.background')
+            .service('Timer', ['$interval', 'lodash', Timer]);
 })();

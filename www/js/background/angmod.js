@@ -8,5 +8,10 @@
      * Module containing services required for background mode and notifications
      */
     angular
-        .module('compendium.background', []);
+        .module('compendium.background', ['pouchdb',
+                                            'ngLodash',
+                                            'compendium.apikeys',
+                                            'compendium.characters',
+                                            'compendium.training',
+                                            'compendium.utilities']);
 })();

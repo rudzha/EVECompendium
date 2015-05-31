@@ -20,35 +20,12 @@
          * @param {string} Randomly generated ID used to store the object
          * @param {object} Object containing properties
          */
-        var skillPlan = function(id, obj) {
-            this._id = 'Plan-'+ id;
+        var skillPlan = function() {
+            this._id = 'Plan-';
             this._rev = '';
-            this.name = obj.name;
-            this.skillSeed = obj.skillSeed || {};
-            this.generatedSkillPlan = obj.generatedSkillPlan || {};
-        };
-        /**
-         * @ngdoc method
-         * @name save
-         * @description
-         *
-         * Calls SkillPlan's serialize method and then saves the returned Object
-         * to database.
-         *
-         * @returns {object} A promise object which contains database response
-         */
-        skillPlan.prototype.save = function() {
-            var self = this;
-            var dfd = $q.defer();
-            localDB.put(self.serialize()).then(function(response){
-                console.log('SkillPlan:save', response);
-                self._rev = response.rev;
-                dfd.resolve(response);
-            }).catch(function(error){
-                console.log('SkillPlan:save',error);
-                dfd.reject(error);
-            });
-            return dfd.promise;
+            this.name = '';
+            this.skillSeed = [];
+            this.generatedSkillPlan = [];
         };
         /**
          * @ngdoc method
@@ -70,25 +47,6 @@
                 dfd.reject(error);
             });
             return dfd.promise;
-        };
-        /**
-         * @ngdoc method
-         * @name serialize
-         * @description
-         *
-         * Creates a copy of the SkillPlan object's properites.
-         * For the object to be saved it needs to be stripped of it's methods.
-         *
-         * @returns {object} Naked/stripped SkillPlan object
-         */
-        skillPlan.prototype.serialize = function() {
-            var serialObj = {};
-            for (var property in this) {
-                if (this.hasOwnProperty(property)) {
-                    serialObj[property] = this[property];
-                }
-            }
-            return serialObj;
         };
         return skillPlan;
     }

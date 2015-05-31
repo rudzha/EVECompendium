@@ -9,5 +9,5 @@
      * the skill planning functionallity of the application
      */
     angular
-        .module('compendium.plan', ['compendium.skilltree']);
+        .module('compendium.plan', ['compendium.skilltree', 'compendium.utilities']);
 })();

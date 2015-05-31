@@ -127,7 +127,7 @@
         };
     }
     angular
-        .module('compendium.monitor')
+        .module('compendium.background')
             .service('Monitor', ['lodash',
                                     'APIKeys',
                                     'Characters',

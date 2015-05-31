@@ -16,7 +16,6 @@ angular.module('compendium', [
     'compendium.apikeys',
     'compendium.background',
     'compendium.characters',
-    'compendium.monitor',
     'compendium.plan',
     'compendium.skilltree',
     'compendium.settings',

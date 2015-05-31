@@ -8,7 +8,7 @@
      * Interface for Skill Plans, holds and let's you manage multiple
      * SkillPlans
      */
-    function SkillPlans ($q, SkillPlan, pouchDB, lodash) {
+    function SkillPlans ($q, SkillPlan, pouchDB, lodash, ObjectSerializer) {
         var localDB = new pouchDB('compendium');
         this.skillPlans = {};
         /**
@@ -35,6 +35,20 @@
         };
         /**
          * @ngdoc method
+         * @name list
+         * @description
+         *
+         * Converts current skills dictionary to a list
+         * @returns {array} SkillsCurrent list
+         */
+        this.list = function() {
+            var self = this;
+            return lodash.transform(self.skillPlans, function(result, plans){
+                result.push(plans);
+            }, []);
+        };
+        /**
+         * @ngdoc method
          * @name create
          * @description
          *
@@ -46,11 +60,12 @@
          */
         this.create = function(plan) {
             var self = this;
-            var id = Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-            var temp = new SkillPlan(id, plan);
-            return temp.save().then(function(response){
-                self.skillPlans['Plan-'+id] = temp;
-                console.log(self.skillPlans);
+            plan._id += Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+            return localDB.put(ObjectSerializer.serialize(plan))
+            .then(function(response){
+                plan._rev = response.rev;
+                self.skillPlans[plan._id] = plan;
+                return plan;
             });
         };
         /**
@@ -65,6 +80,25 @@
         this.read = function(id) {
             var self = this;
             return self.skillPlans[id];
+        };
+        /**
+         * @ngdoc method
+         * @name update
+         * @description
+         *
+         * Save SkillsQueue to database
+         * @param {object} SkillPlan
+         * @returns {object} Promise containing SkillsQueue.save response
+         */
+        this.update = function(plan) {
+            var self = this;
+            return localDB.put(ObjectSerializer.serialize(plan))
+            .then(function(response){
+                plan._rev = response.rev;
+            })
+            .catch(function(error){
+                return error;
+            });
         };
         /**
          * @ngdoc method
@@ -84,5 +118,5 @@
         };
     }
     angular.module('compendium.plan')
-        .service('SkillPlans', ['$q', 'SkillPlan', 'pouchDB', 'lodash', SkillPlans]);
+        .service('SkillPlans', ['$q', 'SkillPlan', 'pouchDB', 'lodash', 'ObjectSerializer', SkillPlans]);
 })();
