@@ -24,11 +24,11 @@
         this.init = function () {
             var self = this;
             var dfd = $q.defer();
-            localDB.allDocs({include_docs: true, startkey: 'APIKey-', endkey: 'APIKey-\uffff'}).then(function(response){
+            localDB.allDocs({include_docs: true, startkey: 'APIKey-', endkey: 'APIKey-\uffff'}).then(function(response) {
                 self.keys = lodash.transform(response.rows, function(result, item) {
                     result[item.doc.keyID] = lodash.create(APIKey.prototype, item.doc);
                     return result;
-                },{});
+                }, {});
                 dfd.resolve(self);
             });
             return dfd.promise;

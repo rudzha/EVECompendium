@@ -20,16 +20,16 @@
     </ion-header-bar>
     <ion-content ng-controller="menuCtrl">
       <ion-list>
-        <ion-item class='item item-divider item-avatar'>
+        <ion-item ng-show="settings.selectedCharacter" class='item item-divider item-avatar'>
             <img ng-src="http://image.eveonline.com/character/{{settings.selectedCharacter}}_512.jpg"></img>
             <h2>{{characters.read(settings.selectedCharacter).name}}</h2>
             <p>{{settings.selectedCharacter}}</p>
             <br/>
         </ion-item>
         <ion-item nav-clear menu-close ui-sref="app.characters">Characters</ion-item>
-        <ion-item class="item-divider">Details</ion-item>
-        <ion-item nav-clear menu-close ui-sref="app.charactersheet({id: settings.selectedCharacter})">Sheet</ion-item>
-        <ion-item nav-clear menu-close ui-sref="app.skills.current({id: settings.selectedCharacter})">Skills</ion-item>
+        <ion-item ng-show="settings.selectedCharacter" class="item-divider">Details</ion-item>
+        <ion-item ng-show="settings.selectedCharacter" nav-clear menu-close ui-sref="app.charactersheet({id: settings.selectedCharacter})">Sheet</ion-item>
+        <ion-item ng-show="settings.selectedCharacter" nav-clear menu-close ui-sref="app.skills.current({id: settings.selectedCharacter})">Skills</ion-item>
         <ion-item class="item-divider">Planner</ion-item>
         <ion-item nav-clear menu-close ui-sref="app.plans.list">Skill plans</ion-item>
         <ion-item nav-clear menu-close ui-sref="app.training.list">Training plans</ion-item>

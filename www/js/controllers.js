@@ -5,6 +5,7 @@
         Timer.registerFunction(Monitor.refresh);
         $scope.refresh = function (){
             Monitor.refresh();
+            Monitor.cleanUp();
         };
     }
     function menuCtrl ($scope, Settings, Characters) {

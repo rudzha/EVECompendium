@@ -15,6 +15,7 @@
                         SkillsCurrent,
                         SkillsQueues,
                         SkillsQueue,
+                        Settings,
                         TrainingPlans) {
         /**
          * @ngdoc function
@@ -102,7 +103,9 @@
         }
         function refreshTrainingPlans() {
             lodash.forEach(TrainingPlans.list(), function(item) {
-                item.generate();
+                if(Characters.read(item.characterID)){
+                    item.generate();
+                }
             });
         }
         /**
@@ -125,6 +128,28 @@
                 APIKeys.update(key);
             });
         };
+        this.cleanUp = function() {
+            var apikeys = APIKeys.list();
+            var characters = Characters.list();
+            var apiKeyCharacters = lodash.flatten(lodash.map(apikeys, function(key) {
+                return key.characters;
+            }));
+
+            lodash.forEach(characters, function(character){
+                if(!lodash.findWhere(apiKeyCharacters, character.characterID)){
+                    if(Settings.selectedCharacter === character.characterID){
+                        console.log('Trigger');
+                        Settings.selectedCharacter = '';
+                        Settings.save();
+                    }
+
+                    SkillsQueues.delete(character.characterID);
+                    SkillsCurrentAll.delete(character.characterID);
+                    Characters.delete(character.characterID);
+
+                }
+            });
+        };
     }
     angular
         .module('compendium.background')
@@ -136,6 +161,7 @@
                                     'SkillsCurrent',
                                     'SkillsQueues',
                                     'SkillsQueue',
+                                    'Settings',
                                     'TrainingPlans',
                                     Monitor]);
 })();

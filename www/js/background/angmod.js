@@ -13,5 +13,6 @@
                                             'compendium.apikeys',
                                             'compendium.characters',
                                             'compendium.training',
-                                            'compendium.utilities']);
+                                            'compendium.utilities',
+                                            'compendium.settings']);
 })();

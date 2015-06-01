@@ -1,6 +1,7 @@
 <ion-view view-title="Characters">
     <ion-content padding="true" class="has-header">
         <ion-list>
+            <ion-item ng-if="!characters.list().length" class="item-text-wrap">No characters present, either you haven't added a key yet or your account doesn't have any characters</ion-item>
             <ion-radio  ng-model="$parent.selectedCharacter"
                         ng-repeat="character in characters.list()"
                         ng-value="character.characterID"

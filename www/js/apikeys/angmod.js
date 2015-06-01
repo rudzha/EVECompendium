@@ -9,5 +9,5 @@
      * the api key management functionality of the application.
      */
     angular
-        .module('compendium.apikeys', ['pouchdb', 'ngLodash', 'compendium.utilities']);
+        .module('compendium.apikeys', ['pouchdb', 'ngLodash', 'compendium.utilities', 'compendium.background']);
 })();

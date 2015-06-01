@@ -19,7 +19,7 @@
      * Controller for the new APIKey additon view. Creates new APIKey object,
      * fills from user input and the passes on to APIKeys service
      */
-    function APIKeysNewCtrl($scope, $state, APIKeys, APIKey) {
+    function APIKeysNewCtrl($scope, $state, APIKeys, APIKey, Monitor) {
         $scope.newkey = new APIKey();
         //TODO: Here for testing purposes, remove
         $scope.newkey.name = 'test';
@@ -31,7 +31,7 @@
                 console.log('APIKeysNewCtrl', response);
                 return APIKeys.create(key);
             }).then(function(response){
-                console.log('APIKeysNewCtrl', response);
+                Monitor.refresh();
                 $state.go('app.apikeys.list');
             }).catch(function(error) {
                 console.log('APIKeysNewCtrl', error);
@@ -45,11 +45,12 @@
      *
      * Controller for the individual key view.
      */
-    function APIKeysSelectedCtrl($scope, $state, $stateParams, APIKeys) {
+    function APIKeysSelectedCtrl($scope, $state, $stateParams, APIKeys, Monitor) {
         $scope.apikey = APIKeys.read($stateParams.id);
         $scope.deleteKey = function() {
             APIKeys.delete($stateParams.id).then(function(response){
                 console.log('APIKeysSelectedCtrl', response);
+                Monitor.cleanUp();
                 $state.go('app.apikeys.list');
             }).catch(function(error){
                 console.log('APIKeysSelectedCtrl', error);
@@ -59,6 +60,6 @@
     angular
         .module('compendium.apikeys')
             .controller('APIKeysListCtrl', ['$scope', 'APIKeys', APIKeysListCtrl])
-            .controller('APIKeysNewCtrl', ['$scope', '$state', 'APIKeys', 'APIKey', APIKeysNewCtrl])
-            .controller('APIKeysSelectedCtrl', ['$scope', '$state', '$stateParams', 'APIKeys', APIKeysSelectedCtrl]);
+            .controller('APIKeysNewCtrl', ['$scope', '$state', 'APIKeys', 'APIKey', 'Monitor', APIKeysNewCtrl])
+            .controller('APIKeysSelectedCtrl', ['$scope', '$state', '$stateParams', 'APIKeys', 'Monitor', APIKeysSelectedCtrl]);
 })();
