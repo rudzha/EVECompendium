@@ -27,6 +27,9 @@
          * @returns {array}
          */
         this.generate = function(seed) {
+            if(!lodash.isArray(seed) || !seed.length) {
+                return [];
+            }
             var skillList = lodash.chain(seed)
             .map(function(item) {
                 var result = [item];
@@ -57,7 +60,6 @@
                 return skill;
             })
             .value();
-            console.log(skillList);
             return skillList;
         };
     }

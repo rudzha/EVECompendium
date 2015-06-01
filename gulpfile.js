@@ -1,4 +1,6 @@
 var gulp = require('gulp');
+var jasmine = require('gulp-jasmine');
+var karma = require('gulp-karma');
 var gutil = require('gulp-util');
 var bower = require('bower');
 var concat = require('gulp-concat');
@@ -10,10 +12,23 @@ var sh = require('shelljs');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
-  js: ['./www/js/**/*.js']
+  js: ['./www/js/**/*.js'],
+  tests: ['./spec/*.js']
 };
 
-gulp.task('default', ['sass']);
+gulp.task('default', ['sass', 'test']);
+
+gulp.task('test', function() {
+  return gulp.src('./fake')
+    .pipe(karma({
+        configFile: 'karma.conf.js',
+        action: 'run'
+    }))
+    .on('error', function(err){
+        console.log(err);
+        this.emit('end');
+    });
+});
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
@@ -28,7 +43,7 @@ gulp.task('sass', function(done) {
 });
 
 gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass']);
+  gulp.watch(paths.sass, ['sass', 'test']);
 });
 
 gulp.task('install', ['git-check'], function() {
