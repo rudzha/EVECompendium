@@ -52,7 +52,7 @@ describe('SkillPlanGenerator', function(){
     it('should generate a plan with 2 skills from a seed with 1 skill that has one level 1 dependency', function(){
         expect(SkillPlanGenerator.generate([skillBA])).toEqual([
             { skillID: '0', name:'A', level: 1 },
-            { skillID: '1', name: 'BA', level:1 }
+            { skillID: '1', name: 'BA', level: 1 }
         ]);
     });
 
@@ -63,7 +63,7 @@ describe('SkillPlanGenerator', function(){
             { skillID: '0', name:'A', level: 3 },
             { skillID: '0', name:'A', level: 4 },
             { skillID: '0', name:'A', level: 5 },
-            { skillID: '2', name: 'CA', level:1 }
+            { skillID: '2', name: 'CA', level: 1 }
         ]);
     });
 

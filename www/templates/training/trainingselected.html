@@ -3,6 +3,14 @@
         <button class="button-clear" ng-click="delete()">DELETE</button>
         <ion-list>
             <ion-item class="item-text-wrap" ng-hide="checkIfEmpty(training.trainingPlan)">Either training is finished or no skills are present in skill plan</ion-item>
+            <ion-item ng-show="checkIfEmpty(training.trainingPlan)">
+                <h2>Optimal attributes</h2>
+                <p>Charisma: {{training.optimalAttributes.charisma}} </p>
+                <p>Intelligence: {{training.optimalAttributes.intelligence}}</p>
+                <p>Memory: {{training.optimalAttributes.memory}}</p>
+                <p>Willpower: {{training.optimalAttributes.willpower}}</p>
+                <p>Perception: {{training.optimalAttributes.perception}}</p>
+            </ion-item>
             <ion-item ng-repeat="skill in training.trainingPlan">
                 <h2>{{skill.name}}</h2>
                 <p>Level {{skill.level}}</p>

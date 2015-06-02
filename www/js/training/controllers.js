@@ -42,8 +42,10 @@
         $scope.saveTraining = function(){
             $scope.newtraining.generate()
             .then(function(response){
-                console.log(response);
-                TrainingPlans.create($scope.newtraining);
+                return response.optimize();
+            })
+            .then(function(response){
+                TrainingPlans.create(response);
             });
             $state.go('app.training.list');
         };

@@ -104,7 +104,11 @@
         function refreshTrainingPlans() {
             lodash.forEach(TrainingPlans.list(), function(item) {
                 if(Characters.read(item.characterID)){
-                    item.generate();
+                    item.generate().then(function(response){
+                        return response.optimize();
+                    }).then(function(response) {
+                        TrainingPlans.update(response._id);
+                    });
                 }
             });
         }

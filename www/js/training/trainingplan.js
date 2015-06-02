@@ -7,7 +7,7 @@
      *
      * Factory for creation of TrainingPlan objects.
      */
-    function TrainingPlan($q, lodash, pouchDB, SkillsCurrentAll, SkillsQueues, SkillPlans, TrainingPlanGenerator) {
+    function TrainingPlan($q, lodash, pouchDB, SkillsCurrentAll, SkillsQueues, SkillPlans, TrainingPlanGenerator, AttributeOptimizer) {
         var localDB = new pouchDB('compendium');
         /**
          * @ngdoc method
@@ -23,6 +23,13 @@
             this.characterID = '';
             this.planID = '';
             this.trainingPlan = [];
+            this.optimalAttributes = {
+                charisma: 17,
+                intelligence: 17,
+                memory: 17,
+                willpower: 17,
+                perception: 17
+            };
         };
         /**
          * @ngdoc method
@@ -82,6 +89,14 @@
             }
             return dfd.promise;
         };
+        trainingPlan.prototype.optimize = function() {
+            console.log('Optimizes');
+            var self = this;
+            var dfd = $q.defer();
+            self.optimalAttributes = AttributeOptimizer.optimize(self.trainingPlan);
+            dfd.resolve(self);
+            return dfd.promise;
+        };
         /**
          * @ngdoc method
          * @name serialize
@@ -104,5 +119,5 @@
         return trainingPlan;
     }
     angular.module('compendium.training')
-        .factory('TrainingPlan', ['$q', 'lodash', 'pouchDB', 'SkillsCurrentAll', 'SkillsQueues', 'SkillPlans', 'TrainingPlanGenerator', TrainingPlan]);
+        .factory('TrainingPlan', ['$q', 'lodash', 'pouchDB', 'SkillsCurrentAll', 'SkillsQueues', 'SkillPlans', 'TrainingPlanGenerator', 'AttributeOptimizer', TrainingPlan]);
 })();

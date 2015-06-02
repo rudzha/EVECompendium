@@ -56,7 +56,8 @@
                 return [item.skillID, item.level].join();
             })
             .map(function(skill) {
-                skill.name = SkillTree.read(skill.skillID).skillName;
+                var skillDetail = SkillTree.read(skill.skillID);
+                skill.name = skillDetail.skillName;
                 return skill;
             })
             .value();
