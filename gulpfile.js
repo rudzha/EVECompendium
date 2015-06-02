@@ -12,7 +12,7 @@ var sh = require('shelljs');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
-  js: ['./www/js/**/*.js'],
+  js: ['./www/js/**/*.js', './www/js/*.js'],
   tests: ['./tests/spec/*.js']
 };
 
@@ -43,7 +43,8 @@ gulp.task('sass', function(done) {
 });
 
 gulp.task('watch', function() {
-    gulp.watch(paths.sass, ['sass', 'test']);
+    gulp.watch(paths.sass, ['sass']);
+    gulp.watch(paths.js, ['test']);
 });
 
 gulp.task('install', ['git-check'], function() {

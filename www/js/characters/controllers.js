@@ -94,6 +94,33 @@
     function SkillsQueueCtrl ($scope, $stateParams, SkillsQueues) {
         $scope.queue = SkillsQueues.read($stateParams.id);
     }
+    function MailListCtrl ($scope, $stateParams, $sce, $ionicModal, EVEMailboxes) {
+        $scope.mailList = EVEMailboxes.read($stateParams.id);
+        $ionicModal.fromTemplateUrl('templates/mail/mailmessage.html', {
+            scope: $scope
+        })
+        .then(function(modal) {
+            $scope.modal = modal;
+        });
+        $scope.openMessage = function(header) {
+            $scope.message = $scope.mailList.mailbody[header.messageID];
+            $scope.title = header.title;
+            $scope.senderName = header.senderName;
+            $scope.sentDate = header.sentDate;
+            $scope.trustAsHtml = $sce.trustAsHtml;
+            header.read = true;
+            EVEMailboxes.update($scope.mailList)
+            .then(function(){
+                $scope.modal.show();
+            }).catch(function(error) {
+                console.log(error);
+            });
+
+        };
+        $scope.closeMessage = function() {
+            $scope.modal.hide();
+        };
+    }
     angular
         .module('compendium.characters')
             .controller('CharactersCtrl', ['$scope', 'Settings', 'Characters', CharactersCtrl])
@@ -101,5 +128,6 @@
             .controller('CharacterSkillsCtrl', ['$scope', '$sce', '$ionicModal', 'lodash', 'SkillTree', 'Settings', CharacterSkillsCtrl])
             .controller('SkillsAllCtrl', ['$scope', 'SkillTree', SkillsAllCtrl])
             .controller('SkillsQueueCtrl', ['$scope', '$stateParams', 'SkillsQueues', SkillsQueueCtrl])
-            .controller('SkillsCurrentCtrl', ['$scope', '$stateParams', 'SkillsCurrentAll', SkillsCurrentCtrl]);
+            .controller('SkillsCurrentCtrl', ['$scope', '$stateParams', 'SkillsCurrentAll', SkillsCurrentCtrl])
+            .controller('MailListCtrl', ['$scope', '$stateParams', '$sce', '$ionicModal', 'EVEMailboxes', MailListCtrl]);
 })();

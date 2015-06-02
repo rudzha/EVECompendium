@@ -15,6 +15,8 @@
                         SkillsCurrent,
                         SkillsQueues,
                         SkillsQueue,
+                        EVEMailboxes,
+                        EVEMail,
                         Settings,
                         TrainingPlans) {
         /**
@@ -41,6 +43,31 @@
                     return tempChar.refresh(key.keyID, key.verificationCode)
                     .then(function(response){
                         return Characters.update(tempChar);
+                    });
+                }
+            });
+        }
+        function refreshEVEMail(key) {
+            lodash.forEach(key.characters, function(char) {
+                if (lodash.isUndefined(EVEMailboxes.read(char))) {
+                    var temp = new EVEMail();
+                    console.log('new mail', char);
+                    temp.characterID = char;
+                    temp.refresh(key.keyID, key.verificationCode)
+                    .then(function(){
+                        return EVEMailboxes.create(temp);
+                    })
+                    .catch(function(error){
+                        console.log(error);
+                    });
+                } else {
+                    var temp = EVEMailboxes.read(char);
+                    return temp.refresh(key.keyID, key.verificationCode)
+                    .then(function(response){
+                        return EVEMailboxes.update(temp);
+                    })
+                    .catch(function(error){
+                        console.log(error);
                     });
                 }
             });
@@ -127,7 +154,9 @@
                     refreshCharacters(key);
                     refreshSkillsCurrent(key);
                     refreshSkillsQueue(key);
+                    refreshEVEMail(key);
                     refreshTrainingPlans();
+
                 });
                 APIKeys.update(key);
             });
@@ -146,7 +175,7 @@
                         Settings.selectedCharacter = '';
                         Settings.save();
                     }
-
+                    EVEMailboxes.delete(character.characterID);
                     SkillsQueues.delete(character.characterID);
                     SkillsCurrentAll.delete(character.characterID);
                     Characters.delete(character.characterID);
@@ -165,6 +194,8 @@
                                     'SkillsCurrent',
                                     'SkillsQueues',
                                     'SkillsQueue',
+                                    'EVEMailboxes',
+                                    'EVEMail',
                                     'Settings',
                                     'TrainingPlans',
                                     Monitor]);

@@ -30,6 +30,7 @@
         <ion-item ng-show="settings.selectedCharacter" class="item-divider">Details</ion-item>
         <ion-item ng-show="settings.selectedCharacter" nav-clear menu-close ui-sref="app.charactersheet({id: settings.selectedCharacter})">Sheet</ion-item>
         <ion-item ng-show="settings.selectedCharacter" nav-clear menu-close ui-sref="app.skills.current({id: settings.selectedCharacter})">Skills</ion-item>
+        <ion-item ng-show="settings.selectedCharacter" nav-clear menu-close ui-sref="app.mail.list({id: settings.selectedCharacter})">Mail</ion-item>
         <ion-item class="item-divider">Planner</ion-item>
         <ion-item nav-clear menu-close ui-sref="app.plans.list">Skill plans</ion-item>
         <ion-item nav-clear menu-close ui-sref="app.training.list">Training plans</ion-item>

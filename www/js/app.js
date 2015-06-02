@@ -58,6 +58,9 @@ angular.module('compendium', [
                 characters: function(Characters) {
                     return Characters.init();
                 },
+                evemail: function(EVEMailboxes) {
+                    return EVEMailboxes.init();
+                },
                 skillscurrent: function(SkillsCurrentAll) {
                     return SkillsCurrentAll.init();
                 },
@@ -140,6 +143,27 @@ angular.module('compendium', [
                 'menuContent': {
                     templateUrl: 'templates/characters/charactersheet.html',
                     controller: 'CharacterSheetCtrl'
+                }
+            }
+        })
+        .state('app.mail', {
+            url: '/mail',
+            abstract: true,
+            cache: true,
+            views: {
+                'menuContent': {
+                    templateUrl: 'templates/mail/mail.html',
+                    controller: 'MailListCtrl'
+                }
+            }
+        })
+        .state('app.mail.list', {
+            url: '/:id',
+            cache: true,
+            views: {
+                'mailView': {
+                    templateUrl: 'templates/mail/maillist.html',
+                    controller: 'MailListCtrl'
                 }
             }
         })
